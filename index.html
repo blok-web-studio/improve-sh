@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="improve — The plan is the product. Use your most capable model to audit your codebase and write plans for cheaper models to execute.">
+<meta name="theme-color" content="#0a0a0f">
+<meta property="og:title" content="improve — The plan is the product">
+<meta property="og:description" content="Use your most capable model to audit your codebase and write plans for cheaper models to execute.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<title>improve — The plan is the product</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@350;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Phosphor Icons -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+
+<style>
+/* ============================================
+   RESET + BASE
+   ============================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-deep: #07070d;
+  --bg-surface: #0e0e18;
+  --bg-elevated: #161625;
+  --text-primary: #f0f0f5;
+  --text-secondary: #8888a0;
+  --text-tertiary: #55556e;
+  --accent-cyan: #00d4ff;
+  --accent-green: #05ffa1;
+  --accent-purple: #7c6df0;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-accent: rgba(0,212,255,0.2);
+  --glow-cyan: 0 0 20px rgba(0,212,255,0.15);
+  --glow-cyan-strong: 0 0 40px rgba(0,212,255,0.25);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   UTILITY
+   ============================================ */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent-cyan);
+  opacity: 0.5;
+}
+
+/* ============================================
+   BACKGROUND EFFECTS
+   ============================================ */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-glow {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(120px);
+  opacity: 0.12;
+}
+
+.bg-glow--cyan {
+  top: -200px;
+  right: -200px;
+  background: var(--accent-cyan);
+}
+
+.bg-glow--purple {
+  bottom: -200px;
+  left: -200px;
+  background: var(--accent-purple);
+}
+
+/* ============================================
+   TERMINAL HEADER
+   ============================================ */
+.terminal-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  padding: 120px 24px 80px;
+}
+
+.terminal-hero__inner {
+  width: 100%;
+  max-width: 800px;
+}
+
+.terminal-window {
+  background: #000;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.5);
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot--red { background: #ff5f56; }
+.terminal-dot--yellow { background: #ffbd2e; }
+.terminal-dot--green { background: #27c93f; }
+
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-left: 12px;
+}
+
+.terminal-body {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  min-height: 400px;
+}
+
+.terminal-line {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: terminal-fade-in 0.3s var(--ease-out) forwards;
+}
+
+.terminal-line--prompt {
+  color: var(--accent-cyan);
+}
+
+.terminal-line--output {
+  color: var(--text-secondary);
+}
+
+.terminal-line--finding-high {
+  color: #ff6b6b;
+}
+
+.terminal-line--finding-med {
+  color: #ffd93d;
+}
+
+.terminal-line--finding-low {
+  color: var(--accent-green);
+}
+
+.terminal-line--highlight {
+  color: var(--text-primary);
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  background: var(--accent-cyan);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+.terminal-prompt-symbol {
+  color: var(--accent-green);
+  margin-right: 8px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes terminal-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   HERO BELOW TERMINAL
+   ============================================ */
+.hero-text {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.hero-tagline span {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat__value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hero-stat__label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+/* ============================================
+   FINDINGS SECTION
+   ============================================ */
+.findings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 48px;
+}
+
+@media (min-width: 768px) {
+  .findings-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .findings-grid > *:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.finding-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  position: relative;
+  transition: border-color 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+
+.finding-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-cyan);
+}
+
+.finding-card__id {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255,255,255,0.03);
+}
+
+.finding-card__id--high { color: #ff6b6b; border-color: rgba(255,107,107,0.3); }
+.finding-card__id--med { color: #ffd93d; border-color: rgba(255,217,61,0.3); }
+.finding-card__id--low { color: var(--accent-green); border-color: rgba(5,255,161,0.3); }
+
+.finding-card__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.finding-card__text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.finding-card__meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.finding-card__meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ============================================
+   PIPELINE SECTION
+   ============================================ */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 48px;
+  position: relative;
+}
+
+.pipeline::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 40px;
+  bottom: 40px;
+  width: 1px;
+  background: var(--border-subtle);
+}
+
+@media (min-width: 768px) {
+  .pipeline::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.pipeline-step {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0 24px 56px;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .pipeline-step {
+    flex-direction: row;
+    padding: 32px 0;
+    padding-left: 0;
+  }
+
+  .pipeline-step:nth-child(odd) {
+    flex-direction: row;
+  }
+
+  .pipeline-step__content {
+    width: 50%;
+    padding-right: 48px;
+  }
+
+  .pipeline-step:nth-child(even) .pipeline-step__content {
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 48px;
+    text-align: right;
+  }
+
+  .pipeline-step:nth-child(even) .pipeline-step__connector {
+    left: auto;
+    right: 50%;
+  }
+}
+
+.pipeline-step__dot {
+  position: absolute;
+  left: 16px;
+  top: 32px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-deep);
+  border: 2px solid var(--border-subtle);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .pipeline-step__dot {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.pipeline-step__dot--active {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(0,212,255,0.3);
+}
+
+.pipeline-step__dot--active::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+}
+
+.pipeline-step__num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pipeline-step__title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+
+.pipeline-step__desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ============================================
+   QUOTE / PHILOSOPHY SECTION
+   ============================================ */
+.philosophy {
+  text-align: center;
+  padding: 120px 24px;
+  position: relative;
+}
+
+.philosophy__quote {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  max-width: 800px;
+  margin: 0 auto 24px;
+}
+
+.philosophy__quote span {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.philosophy__sub {
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ============================================
+   EXECUTABLE PLANS
+   ============================================ */
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+@media (min-width: 768px) {
+  .plans-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.plan-rule {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: border-color 0.3s var(--ease-out);
+}
+
+.plan-rule:hover {
+  border-color: var(--border-accent);
+}
+
+.plan-rule__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(0,212,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 1.1rem;
+  color: var(--accent-cyan);
+}
+
+.plan-rule__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.plan-rule__text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ============================================
+   INSTALL / CTA
+   ============================================ */
+.install-section {
+  padding: 100px 0;
+  text-align: center;
+}
+
+.install-block {
+  max-width: 650px;
+  margin: 40px auto 0;
+  background: #000;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-align: left;
+}
+
+.install-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.install-block__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.install-block__copy {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.install-block__copy:hover {
+  background: rgba(0,212,255,0.1);
+}
+
+.install-block__body {
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--accent-green);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.install-block__prompt {
+  color: var(--text-tertiary);
+}
+
+.install-block__cmd {
+  color: var(--text-primary);
+}
+
+.commands-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 48px;
+  text-align: left;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .commands-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.command-item:hover {
+  border-color: var(--border-accent);
+}
+
+.command-item__symbol {
+  color: var(--accent-green);
+  flex-shrink: 0;
+}
+
+.command-item__cmd {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.command-item__desc {
+  color: var(--text-tertiary);
+  margin-left: auto;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+/* ============================================
+   HARD RULES
+   ============================================ */
+.rules-list {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rule-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.rule-item:hover {
+  border-color: var(--border-accent);
+}
+
+.rule-item__icon {
+  color: var(--accent-cyan);
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.rule-item__text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.rule-item__text strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ============================================
+   NAV
+   ============================================ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(7,7,13,0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.nav-brand {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-brand span {
+  color: var(--accent-cyan);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s var(--ease-out);
+  font-weight: 450;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-link--github {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.nav-link--github:hover {
+  border-color: var(--border-accent);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer {
+  padding: 48px 24px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.footer-brand span {
+  color: var(--accent-cyan);
+}
+
+.footer-text {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.2s var(--ease-out);
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   SCROLL REVEAL
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .terminal-body {
+    padding: 16px;
+    font-size: 0.78rem;
+    min-height: auto;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .hero-stats {
+    gap: 20px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .nav-link--github span {
+    display: none;
+  }
+
+  .philosophy {
+    padding: 80px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .terminal-hero {
+    padding: 100px 16px 60px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--cyan" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--purple" aria-hidden="true"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-brand">
+    <i class="ph-duotone ph-code-block" style="font-size: 1.2rem;"></i>
+    improve<span>.</span>
+  </div>
+  <div class="nav-links">
+    <a href="#findings" class="nav-link">Findings</a>
+    <a href="#pipeline" class="nav-link">Pipeline</a>
+    <a href="#install" class="nav-link">Install</a>
+    <a href="https://github.com/shadcn/improve" class="nav-link nav-link--github" target="_blank" rel="noopener">
+      <i class="ph-duotone ph-github-logo" style="font-size: 1rem;"></i>
+      <span>GitHub</span>
+      <i class="ph-duotone ph-arrow-up-right" style="font-size: 0.75rem;"></i>
+    </a>
+  </div>
+</nav>
+
+<!-- Terminal Hero -->
+<section class="terminal-hero" id="top">
+  <div class="terminal-hero__inner">
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <span class="terminal-dot terminal-dot--red"></span>
+        <span class="terminal-dot terminal-dot--yellow"></span>
+        <span class="terminal-dot terminal-dot--green"></span>
+        <span class="terminal-title">~/project — bash — 80×24</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+
+    <div class="hero-text reveal" id="hero-text">
+      <p class="hero-tagline">
+        The plan <span>is the product.</span>
+      </p>
+      <p class="hero-desc">
+        Use your most capable model to audit your codebase and write implementation plans for cheaper models to execute. Let intelligence compound where it matters most.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat__value">9</div>
+          <div class="hero-stat__label">audit categories</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat__value">3</div>
+          <div class="hero-stat__label">phase pipeline</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat__value">6.8k</div>
+          <div class="hero-stat__label">GitHub stars</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat__value">MIT</div>
+          <div class="hero-stat__label">license</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Findings Section -->
+<section class="section" id="findings">
+  <div class="container">
+    <div class="section-label reveal">AUDIT-001 — Findings</div>
+    <h2 class="hero-tagline reveal" style="text-align: left; font-size: clamp(1.5rem, 3.5vw, 2.4rem); margin-bottom: 8px;">
+      We scanned every AI workflow.<br>Here's what we found.
+    </h2>
+    <p class="hero-desc reveal" style="text-align: left; margin: 0 0 8px;">
+      Three critical issues that improve.sh is designed to solve. Every finding carries file:line evidence, impact, effort, and confidence.
+    </p>
+
+    <div class="findings-grid">
+      <article class="finding-card reveal">
+        <span class="finding-card__id finding-card__id--high">F-001 · CRITICAL</span>
+        <h3 class="finding-card__title">Every task runs on your most expensive model</h3>
+        <p class="finding-card__text">
+          Expensive models are used for everything — including simple refactors, boilerplate generation, and tests. Intelligence doesn't compound because there's no architect. Every prompt is a greenfield generation.
+        </p>
+        <div class="finding-card__meta">
+          <span>⚡ High impact</span>
+          <span>🔄 Effort: M</span>
+          <span>🎯 Confidence: HIGH</span>
+        </div>
+      </article>
+
+      <article class="finding-card reveal">
+        <span class="finding-card__id finding-card__id--high">F-002 · CRITICAL</span>
+        <h3 class="finding-card__title">No codebase context before generation</h3>
+        <p class="finding-card__text">
+          Models generate against a blank slate every time. Existing patterns, conventions, and architecture decisions are invisible. Each generation risks drifting further from the codebase's actual design.
+        </p>
+        <div class="finding-card__meta">
+          <span>⚡ High impact</span>
+          <span>🔄 Effort: L</span>
+          <span>🎯 Confidence: HIGH</span>
+        </div>
+      </article>
+
+      <article class="finding-card reveal">
+        <span class="finding-card__id finding-card__id--med">F-003 · MAJOR</span>
+        <h3 class="finding-card__title">No verification gates on generated code</h3>
+        <p class="finding-card__text">
+          Generated code is merged without automated verification against existing tests, lint rules, or conventions. There's no "done criteria" — just subjective review. Regressions compound silently.
+        </p>
+        <div class="finding-card__meta">
+          <span>📊 Medium impact</span>
+          <span>🔄 Effort: M</span>
+          <span>🎯 Confidence: MEDIUM</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Pipeline Section -->
+<section class="section" id="pipeline">
+  <div class="container">
+    <div class="section-label reveal">PLAN-001 — Architecture</div>
+    <h2 class="hero-tagline reveal" style="text-align: left; font-size: clamp(1.5rem, 3.5vw, 2.4rem); margin-bottom: 8px;">
+      A pipeline, not a prompt.
+    </h2>
+    <p class="hero-desc reveal" style="text-align: left; margin: 0 0 8px;">
+      Seven stages. One directional flow. From raw codebase to executable plan — with verification at every step.
+    </p>
+
+    <div class="pipeline">
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot pipeline-step__dot--active"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase I</div>
+          <h3 class="pipeline-step__title">Recon</h3>
+          <p class="pipeline-step__desc">Map the repo: stack, conventions, build/test/lint commands. Ingests ADRs, PRDs, DESIGN.md, PRODUCT.md — so decided tradeoffs aren't re-flagged as findings.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase II</div>
+          <h3 class="pipeline-step__title">Audit</h3>
+          <p class="pipeline-step__desc">Fans out parallel subagents across 9 categories: correctness, security, performance, test coverage, tech debt, dependencies, DX, docs, and direction. Every finding carries file:line evidence.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase III</div>
+          <h3 class="pipeline-step__title">Vet</h3>
+          <p class="pipeline-step__desc">Subagents over-report, so the advisor re-reads every cited location itself. False positives get dropped, wrong attributions get corrected, rejections get recorded.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase IV</div>
+          <h3 class="pipeline-step__title">Prioritize</h3>
+          <p class="pipeline-step__desc">Findings land in a table ordered by leverage — impact ÷ effort, weighted by confidence. You pick what becomes plans. The raw data is surfaced, not hidden.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase V</div>
+          <h3 class="pipeline-step__title">Plan</h3>
+          <p class="pipeline-step__desc">One file per selected finding. Self-contained specs with current-code excerpts, exact steps, and verified commands. Written for the weakest plausible executor.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase VI</div>
+          <h3 class="pipeline-step__title">Execute</h3>
+          <p class="pipeline-step__desc">Spawns a cheaper executor in an isolated worktree. Reviews results like a tech lead: re-runs done criteria, checks scope compliance, reads diff against intent.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-step reveal">
+        <div class="pipeline-step__dot"></div>
+        <div class="pipeline-step__content">
+          <div class="pipeline-step__num">Phase VII</div>
+          <h3 class="pipeline-step__title">Reconcile</h3>
+          <p class="pipeline-step__desc">Next session: verify what landed, refresh what drifted, unblock what got stuck. Plans aren't fire-and-forget — they're living documents.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Executable Plans Section -->
+<section class="section" style="background: var(--bg-surface);">
+  <div class="container">
+    <div class="section-label reveal">PLAN-002 — Specification</div>
+    <h2 class="hero-tagline reveal" style="text-align: left; font-size: clamp(1.5rem, 3.5vw, 2.4rem); margin-bottom: 8px;">
+      Plans that execute. Not essays.
+    </h2>
+    <p class="hero-desc reveal" style="text-align: left; margin: 0 0 8px;">
+      Every plan has three properties that make it executable by the weakest model — no context-sharing, no "as discussed above," no improvisation.
+    </p>
+
+    <div class="plans-grid">
+      <div class="plan-rule reveal">
+        <div class="plan-rule__icon"><i class="ph-duotone ph-file-text"></i></div>
+        <h3 class="plan-rule__title">Self-contained</h3>
+        <p class="plan-rule__text">All context is inlined — exact file paths, current-state code excerpts, repo conventions with an exemplar file, verified commands. No dependencies on prior conversation.</p>
+      </div>
+
+      <div class="plan-rule reveal">
+        <div class="plan-rule__icon"><i class="ph-duotone ph-check-circle"></i></div>
+        <h3 class="plan-rule__title">Verification gates</h3>
+        <p class="plan-rule__text">Every step ends with a command and its expected output. Done criteria are machine-checkable. The executor never has to judge whether it succeeded.</p>
+      </div>
+
+      <div class="plan-rule reveal">
+        <div class="plan-rule__icon"><i class="ph-duotone ph-x-circle"></i></div>
+        <h3 class="plan-rule__title">Hard boundaries</h3>
+        <p class="plan-rule__text">Explicit out-of-scope lists and STOP conditions — "if X, stop and report" — instead of letting a small model improvise when reality doesn't match the plan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="philosophy">
+  <div class="philosophy__inner reveal" style="max-width: 800px; margin: 0 auto;">
+    <p class="section-label" style="justify-content: center; margin-bottom: 24px;">PHILOSOPHY-001</p>
+    <blockquote class="philosophy__quote">
+      "You → /improve → plans/ → other agent → <span>done</span>"
+    </blockquote>
+    <p class="philosophy__sub">
+      Intelligence compounds where it matters — understanding the codebase, judging what's worth doing, writing the spec. The skill never implements anything itself. The plan is the product.
+    </p>
+  </div>
+</section>
+
+<!-- Hard Rules -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">PLAN-003 — Constraints</div>
+    <h2 class="hero-tagline reveal" style="text-align: left; font-size: clamp(1.5rem, 3.5vw, 2.4rem); margin-bottom: 8px;">
+      Hard rules. No exceptions.
+    </h2>
+    <p class="hero-desc reveal" style="text-align: left; margin: 0 0 8px;">
+      improve.sh has strict boundaries. It's an advisor, not an implementer.
+    </p>
+
+    <div class="rules-list">
+      <div class="rule-item reveal">
+        <span class="rule-item__icon"><i class="ph-duotone ph-pen-nib"></i></span>
+        <p class="rule-item__text"><strong>Never modifies source code.</strong> The only writes go to <code style="font-family: var(--font-mono); font-size: 0.82rem;">plans/</code>. Executors edit only in disposable worktrees; merging is always yours.</p>
+      </div>
+      <div class="rule-item reveal">
+        <span class="rule-item__icon"><i class="ph-duotone ph-shield-check"></i></span>
+        <p class="rule-item__text"><strong>Never mutates your working tree.</strong> Read, search, and read-only analysis only. Your codebase stays untouched.</p>
+      </div>
+      <div class="rule-item reveal">
+        <span class="rule-item__icon"><i class="ph-duotone ph-lock-key"></i></span>
+        <p class="rule-item__text"><strong>Never reproduces secret values.</strong> Locations and credential types only, rotation always recommended.</p>
+      </div>
+      <div class="rule-item reveal">
+        <span class="rule-item__icon"><i class="ph-duotone ph-warning-circle"></i></span>
+        <p class="rule-item__text"><strong>Asked to implement? It declines.</strong> It points at the plan — or offers <code style="font-family: var(--font-mono); font-size: 0.82rem;">/improve execute</code> to dispatch a cheaper executor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commands Reference -->
+<section class="section" style="background: var(--bg-surface);" id="install">
+  <div class="container">
+    <div class="section-label reveal">QUICKSTART-001</div>
+    <h2 class="hero-tagline reveal" style="text-align: left; font-size: clamp(1.5rem, 3.5vw, 2.4rem); margin-bottom: 8px;">
+      Install. Run. Plan.
+    </h2>
+    <p class="hero-desc reveal" style="text-align: left; margin: 0 auto 8px;">
+      Works in any agent that supports Agent Skills format.
+    </p>
+
+    <div class="install-block reveal" id="install-block">
+      <div class="install-block__header">
+        <span class="install-block__label">Terminal</span>
+        <button class="install-block__copy" id="copy-btn" onclick="copyInstallCmd()">
+          <i class="ph-duotone ph-copy-simple" style="font-size: 0.9rem;"></i>
+          Copy
+        </button>
+      </div>
+      <div class="install-block__body">
+        <span class="install-block__prompt">$ </span>
+        <span class="install-block__cmd" id="install-cmd">npx skills add shadcn/improve</span>
+      </div>
+    </div>
+
+    <div class="commands-grid">
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve</span>
+        <span class="command-item__desc">Full audit</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve quick</span>
+        <span class="command-item__desc">Quick pass</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve deep</span>
+        <span class="command-item__desc">Exhaustive</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve branch</span>
+        <span class="command-item__desc">Branch scope</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve next</span>
+        <span class="command-item__desc">Direction</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve reconcile</span>
+        <span class="command-item__desc">Refresh backlog</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve execute</span>
+        <span class="command-item__desc">Dispatch executor</span>
+      </div>
+      <div class="command-item reveal">
+        <span class="command-item__symbol">✦</span>
+        <span class="command-item__cmd">/improve ... --issues</span>
+        <span class="command-item__desc">Publish to GitHub</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <i class="ph-duotone ph-code-block" style="font-size: 1rem;"></i>
+      improve<span>.</span>
+    </div>
+    <p class="footer-text">
+      MIT © shadcn · Built in the open on <a href="https://github.com/shadcn/improve" style="color: var(--accent-cyan); text-decoration: none;">GitHub</a>
+    </p>
+    <div class="footer-links">
+      <a href="https://github.com/shadcn/improve">GitHub</a>
+      <a href="https://agentskills.io">Agent Skills</a>
+      <a href="https://github.com/shadcn">shadcn</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Demo Badge -->
+<div class="demo-badge" id="demo-badge">
+  <div class="demo-badge__label">DEMO SITE</div>
+  <div class="demo-badge__studio">BLOK. WebDev Studio</div>
+  <a href="https://www.fiverr.com/m_uvex" target="_blank" rel="noopener" class="demo-badge__fiverr">Hire on Fiverr</a>
+</div>
+
+<script>
+/* ============================================
+   TERMINAL ANIMATION
+   ============================================ */
+const terminalLines = [
+  { text: 'Running /improve . on current codebase...', cls: 'terminal-line--prompt', delay: 200 },
+  { text: '', cls: '', delay: 100 },
+  { text: '→ Mapping repository structure...', cls: 'terminal-line--output', delay: 400 },
+  { text: '→ Detected stack: TypeScript, React, Tailwind CSS', cls: 'terminal-line--output', delay: 300 },
+  { text: '→ Ingesting DESIGN.md, PRODUCT.md...', cls: 'terminal-line--output', delay: 300 },
+  { text: '→ Spawning 9 parallel audit subagents...', cls: 'terminal-line--output', delay: 400 },
+  { text: '', cls: '', delay: 150 },
+  { text: '  ✓ Correctness — no critical issues', cls: 'terminal-line--finding-low', delay: 600 },
+  { text: '  ⚠ Security — 1 medium finding', cls: 'terminal-line--finding-med', delay: 500 },
+  { text: '  ✓ Performance — clean', cls: 'terminal-line--finding-low', delay: 400 },
+  { text: '  ⚠ Test coverage — 32% uncovered', cls: 'terminal-line--finding-med', delay: 500 },
+  { text: '  ✗ Tech debt — 4 high-impact issues', cls: 'terminal-line--finding-high', delay: 500 },
+  { text: '  ✓ Dependencies — latest versions', cls: 'terminal-line--finding-low', delay: 400 },
+  { text: '  ✗ DX — inconsistent patterns detected', cls: 'terminal-line--finding-high', delay: 500 },
+  { text: '  ✓ Docs — well maintained', cls: 'terminal-line--finding-low', delay: 400 },
+  { text: '  ⚠ Direction — 2 areas for growth', cls: 'terminal-line--finding-med', delay: 500 },
+  { text: '', cls: '', delay: 200 },
+  { text: '═══════════════════════════════════════', cls: 'terminal-line--output', delay: 300 },
+  { text: '  Top findings by leverage (impact ÷ effort):', cls: 'terminal-line--highlight', delay: 400 },
+  { text: '  F-001 · HIGH · Unstructured AI workflow', cls: 'terminal-line--finding-high', delay: 300 },
+  { text: '  F-002 · HIGH · No codebase context before gen', cls: 'terminal-line--finding-high', delay: 200 },
+  { text: '  F-003 · MED  · Missing verification gates', cls: 'terminal-line--finding-med', delay: 200 },
+  { text: '═══════════════════════════════════════', cls: 'terminal-line--output', delay: 300 },
+  { text: '', cls: '', delay: 200 },
+  { text: '■ PLAN-001: Implement improve.sh', cls: 'terminal-line--finding-low', delay: 600 },
+  { text: '  - Install: npx skills add shadcn/improve', cls: 'terminal-line--output', delay: 300 },
+  { text: '  - Run: /improve', cls: 'terminal-line--output', delay: 200 },
+  { text: '  - Plans land in: plans/', cls: 'terminal-line--output', delay: 200 },
+  { text: '  - Recommended: start with "quick" pass', cls: 'terminal-line--output', delay: 300 },
+  { text: '', cls: '', delay: 100 },
+  { text: 'Ready. █', cls: 'terminal-line--prompt', delay: 400 },
+];
+
+const terminalBody = document.getElementById('terminal-body');
+
+function typeTerminal() {
+  let delay = 0;
+  terminalLines.forEach((line, i) => {
+    const el = document.createElement('div');
+    el.className = 'terminal-line ' + line.cls;
+    el.style.animationDelay = delay + 'ms';
+    el.textContent = line.text || '\u00A0';
+    terminalBody.appendChild(el);
+    delay += line.delay;
+  });
+
+  // Total animation duration
+  const totalDuration = delay;
+  // Show hero text after terminal finishes
+  setTimeout(() => {
+    const heroText = document.getElementById('hero-text');
+    if (heroText) heroText.classList.add('reveal--visible');
+  }, totalDuration + 500);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  typeTerminal();
+});
+
+/* ============================================
+   SCROLL REVEAL
+   ============================================ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('reveal--visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.id !== 'hero-text') {
+      revealObserver.observe(el);
+    }
+  });
+});
+
+/* ============================================
+   COPY INSTALL COMMAND
+   ============================================ */
+function copyInstallCmd() {
+  const cmd = document.getElementById('install-cmd').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('copy-btn');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="ph-duotone ph-check" style="font-size: 0.9rem;"></i> Copied!';
+    setTimeout(() => {
+      btn.innerHTML = original;
+    }, 2000);
+  });
+}
+
+/* ============================================
+   DEMO BADGE IFRAME DETECTION
+   ============================================ */
+(function() {
+  'use strict';
+  var params = new URLSearchParams(window.location.search);
+  var inIframe = params.has('embed');
+  if (!inIframe) {
+    try { inIframe = window.self !== window.top; }
+    catch(e) { inIframe = true; }
+  }
+  if (inIframe) {
+    var badge = document.getElementById('demo-badge');
+    if (badge) badge.remove();
+  } else {
+    setTimeout(function() {
+      var badge = document.getElementById('demo-badge');
+      if (badge) badge.classList.add('visible');
+    }, 1000);
+  }
+})();
+</script>
+
+<style>
+/* Demo Badge */
+.demo-badge {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  max-width: 280px;
+  background: rgba(14, 14, 24, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  transform: translateY(150%);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.demo-badge.visible {
+  transform: translateY(0);
+}
+
+.demo-badge__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffd93d;
+  margin-bottom: 4px;
+}
+
+.demo-badge__studio {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f0f0f5;
+  margin-bottom: 2px;
+}
+
+.demo-badge__fiverr {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: #00d4ff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.demo-badge__fiverr:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .demo-badge {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    max-width: 100%;
+    border-radius: 0;
+    text-align: center;
+    padding: 12px 16px;
+  }
+}
+</style>
+
+</body>
+</html>
