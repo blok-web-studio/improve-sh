@@ -10,31 +10,35 @@
 <style>
 /* === RESET === */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:#101010;color:#eeeeee;font-family:Geist,system-ui,sans-serif;font-weight:400;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
 ::selection{background:#ee6018;color:#101010}
+h1,h2,h3,h4{text-wrap:balance}
+
+/* === REDUCED MOTION === */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
+  .reveal{opacity:1 !important;transform:none !important}
+  .hero-canvas{display:none}
+}
 
 /* === UTILITY === */
 .container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.section{padding:80px 0}
 .mono{font-family:Geist Mono,monospace}
-.section{padding:96px 0}
 .section-eyebrow{font-family:Geist Mono,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8380;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.section-eyebrow .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
-.section-eyebrow .dot.orange{background:#ee6018}
-.section-eyebrow .dot.green{background:#a0ca92}
+.section-eyebrow .dot{width:6px;height:6px;border-radius:50%;display:inline-block;background:#ee6018}
 .btn-group{display:flex;gap:12px;flex-wrap:wrap}
 .btn{font-family:Geist,sans-serif;font-size:14px;font-weight:400;padding:0 16px;height:40px;border-radius:3px;display:inline-flex;align-items:center;gap:8px;transition:background .15s cubic-bezier(.4,0,.2,1),color .15s cubic-bezier(.4,0,.2,1),border-color .15s cubic-bezier(.4,0,.2,1)}
 .btn-dark{background:#1d1a18;color:#eeeeee}
 .btn-dark:hover{background:#2a2725}
-.btn-light{background:#fafafa;color:#101010}
-.btn-light:hover{background:#eeeeee}
 .btn-ghost{background:transparent;border:1px solid #3d3a39;color:#eeeeee}
 .btn-ghost:hover{border-color:#8a8380}
 .btn-mono{font-family:Geist Mono,monospace;font-size:12px;letter-spacing:.02em;text-transform:uppercase}
+.btn:active{transform:scale(0.97)}
 
 /* === NAV === */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .2s cubic-bezier(.4,0,.2,1)}
@@ -44,24 +48,37 @@ nav .nav-links{display:flex;align-items:center;gap:32px}
 nav .nav-links a{font-family:Geist Mono,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8380;transition:color .15s cubic-bezier(.4,0,.2,1)}
 nav .nav-links a:hover{color:#eeeeee}
 nav .nav-actions{display:flex;align-items:center;gap:12px}
-.scrolled nav{background:rgba(16,16,16,.85)}
+.scrolled nav{background:rgba(16,16,16,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
+/* Mobile nav toggle */
+.nav-toggle{display:none;flex-direction:column;gap:5px;width:20px;padding:4px 0}
+.nav-toggle span{display:block;height:1px;background:#eeeeee;transition:transform .2s,opacity .2s}
+.nav-toggle.open span:first-child{transform:translateY(6px) rotate(45deg)}
+.nav-toggle.open span:nth-child(2){opacity:0}
+.nav-toggle.open span:last-child{transform:translateY(-6px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(16,16,16,.96);z-index:99;padding:100px 24px 48px;flex-direction:column;gap:0}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:Geist Mono,monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#eeeeee;padding:16px 0;border-bottom:1px solid #1d1a18;display:block;transition:color .15s}
+.mobile-menu a:hover{color:#ee6018}
 
 /* === HERO === */
-.hero{padding:160px 0 96px;min-height:100dvh;display:flex;align-items:center;position:relative;overflow:hidden}
-.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.hero-content h1{font-size:clamp(2.8rem,5vw,4.5rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#eeeeee;margin-bottom:24px}
+.hero{padding:120px 0 80px;min-height:100dvh;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-content{position:relative;z-index:2}
+.hero-content h1{font-size:clamp(2.8rem,5vw,4.2rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#eeeeee;margin-bottom:20px;text-wrap:balance}
 .hero-content h1 .highlight{color:#ee6018}
-.hero-content p{font-size:16px;line-height:1.6;color:#8a8380;max-width:480px;margin-bottom:32px}
+.hero-content p{font-size:16px;line-height:1.6;color:#8a8380;max-width:440px;margin-bottom:28px}
+.hero-sub{font-family:Geist Mono,monospace;font-size:12px;color:#4d4947;margin-top:20px;letter-spacing:.02em}
 
 /* Terminal Window */
-.terminal{background:#080808;border-radius:10px;border:1px solid #1d1a18;overflow:hidden;font-family:Geist Mono,monospace;font-size:13px;line-height:1.6}
+.terminal{background:#080808;border-radius:10px;border:1px solid #1d1a18;overflow:hidden;font-family:Geist Mono,monospace;font-size:13px;line-height:1.6;position:relative;z-index:2}
 .terminal-header{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#0d0d0d;border-bottom:1px solid #1d1a18}
 .terminal-dot{width:10px;height:10px;border-radius:50%}
 .terminal-dot.red{background:#ff5f56}
 .terminal-dot.yellow{background:#ffbd2e}
 .terminal-dot.green{background:#27c93f}
 .terminal-title{font-size:11px;color:#5a5a5a;margin-left:8px;font-family:Geist Mono,monospace;letter-spacing:.02em}
-.terminal-body{padding:20px;color:#b8b3b0;min-height:260px}
+.terminal-body{padding:20px;color:#b8b3b0;min-height:240px}
 .terminal-line{display:flex;gap:12px;opacity:0;animation:terminalReveal .3s cubic-bezier(.4,0,.2,1) forwards}
 .terminal-prompt{color:#a0ca92;flex-shrink:0}
 .terminal-output{color:#b8b3b0}
@@ -73,92 +90,98 @@ nav .nav-actions{display:flex;align-items:center;gap:12px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes terminalReveal{to{opacity:1}}
 
+/* Hero 3D canvas */
+.hero-canvas{position:absolute;top:0;right:0;width:50%;height:100%;z-index:1;opacity:.15}
+
 /* === LOGO STRIP === */
-.logo-strip{padding:64px 0;border-top:1px solid #1d1a18;border-bottom:1px solid #1d1a18}
-.logo-strip .container{display:flex;align-items:center;justify-content:space-between;gap:48px;flex-wrap:wrap}
-.logo-strip .wordmark{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#4d4947;opacity:.5;white-space:nowrap}
+.logo-strip{padding:48px 0;border-top:1px solid #1d1a18;border-bottom:1px solid #1d1a18}
+.logo-strip .container{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
+.logo-strip .wordmark{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#4d4947;white-space:nowrap}
 
 /* === PIPELINE === */
-.pipeline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.pipeline-step{position:relative;padding:32px 24px;border:1px solid #1d1a18;border-radius:10px;transition:border-color .2s cubic-bezier(.4,0,.2,1)}
+.pipeline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.pipeline-step{position:relative;padding:28px 24px;border:1px solid #1d1a18;border-radius:10px;transition:border-color .2s cubic-bezier(.4,0,.2,1)}
 .pipeline-step.active{border-color:#3d3a39}
-.pipeline-step .step-status{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#4d4947;transition:color .2s cubic-bezier(.4,0,.2,1)}
+.pipeline-step .step-status{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#4d4947;transition:color .2s cubic-bezier(.4,0,.2,1)}
 .pipeline-step .step-status .status-dot{width:6px;height:6px;border-radius:50%;background:#4d4947;transition:background .2s}
 .pipeline-step.running .step-status{color:#ee6018}
 .pipeline-step.running .step-status .status-dot{background:#ee6018;animation:pulse 1.2s ease-in-out infinite}
 .pipeline-step.done .step-status{color:#a0ca92}
 .pipeline-step.done .step-status .status-dot{background:#a0ca92}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.pipeline-step .step-num{font-family:Geist Mono,monospace;font-size:32px;font-weight:300;color:#1d1a18;margin-bottom:8px;line-height:1;transition:color .2s}
+.pipeline-step .step-num{font-family:Geist Mono,monospace;font-size:28px;font-weight:300;color:#1d1a18;margin-bottom:8px;line-height:1;transition:color .2s}
 .pipeline-step.active .step-num{color:#3d3a39}
-.pipeline-step h3{font-size:18px;font-weight:400;color:#eeeeee;margin-bottom:8px;letter-spacing:-.01em}
+.pipeline-step h3{font-size:17px;font-weight:400;color:#eeeeee;margin-bottom:8px;letter-spacing:-.01em}
 .pipeline-step p{font-size:14px;color:#8a8380;line-height:1.5}
-.pipeline-connector{display:none}
 
-/* === FEATURES === */
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.feature-card{padding:32px 24px;border:1px solid #1d1a18;border-radius:10px;transition:border-color .2s cubic-bezier(.4,0,.2,1)}
-.feature-card:hover{border-color:#3d3a39}
-.feature-card .icon{width:32px;height:32px;border:1px solid #1d1a18;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#8a8380;font-size:14px;transition:border-color .15s,border-color .15s}
-.feature-card:hover .icon{border-color:#3d3a39}
-.feature-card h3{font-size:16px;font-weight:400;color:#eeeeee;margin-bottom:8px;letter-spacing:-.01em}
-.feature-card p{font-size:14px;color:#8a8380;line-height:1.5}
+/* === FEATURE SPLIT (asymmetric — not 3 identical cards) === */
+.feature-split{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:40px}
+.feature-main{padding:32px 28px;border:1px solid #1d1a18;border-radius:10px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px}
+.feature-main h3{font-size:22px;font-weight:400;color:#eeeeee;margin-bottom:12px;letter-spacing:-.01em;line-height:1.2}
+.feature-main p{font-size:15px;color:#8a8380;line-height:1.6}
+.feature-main .feature-code{font-family:Geist Mono,monospace;font-size:13px;color:#a0ca92;background:#080808;border:1px solid #1d1a18;border-radius:6px;padding:12px 16px;margin-top:16px;line-height:1.6}
+.feature-side{display:flex;flex-direction:column;gap:20px}
+.feature-side-card{padding:24px;border:1px solid #1d1a18;border-radius:10px;flex:1;transition:border-color .2s cubic-bezier(.4,0,.2,1)}
+.feature-side-card:hover{border-color:#3d3a39}
+.feature-side-card h4{font-size:14px;font-weight:400;color:#eeeeee;margin-bottom:6px}
+.feature-side-card p{font-size:13px;color:#8a8380;line-height:1.5}
 
 /* === METRICS === */
-.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px}
-.metric-tile{padding:32px 24px;border-right:1px solid #1d1a18}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border-top:1px solid #1d1a18;border-bottom:1px solid #1d1a18}
+.metric-tile{padding:28px 24px;border-right:1px solid #1d1a18;font-variant-numeric:tabular-nums}
 .metric-tile:last-child{border-right:none}
 .metric-tile .metric-label{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8a8380;margin-bottom:8px}
-.metric-tile .metric-value{font-size:36px;font-weight:400;color:#eeeeee;letter-spacing:-.03em;line-height:1;margin-bottom:4px}
+.metric-tile .metric-value{font-size:32px;font-weight:400;color:#eeeeee;letter-spacing:-.03em;line-height:1;margin-bottom:4px}
 .metric-tile .metric-trend{font-family:Geist Mono,monospace;font-size:11px;color:#a0ca92;display:flex;align-items:center;gap:4px}
 
-/* === CTA SECTION === */
-.cta-section{padding:96px 0}
-.cta-card{background:#eeeeee;border-radius:10px;padding:48px;max-width:560px;margin:0 auto;text-align:center}
-.cta-card .eyebrow{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a8380;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px}
-.cta-card h2{font-size:28px;font-weight:400;color:#101010;line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
-.cta-card p{font-size:14px;color:#4d4947;margin-bottom:24px;line-height:1.5}
-.cta-card .btn-dark{background:#101010;color:#eeeeee}
-.cta-card .btn-dark:hover{background:#2a2725}
+/* === CTA SECTION (dark card, not bright) === */
+.cta-section{padding:80px 0}
+.cta-card{background:#1d1a18;border:1px solid #3d3a39;border-radius:10px;padding:48px;max-width:560px;margin:0 auto;text-align:center}
+.cta-card h2{font-size:26px;font-weight:400;color:#eeeeee;line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
+.cta-card p{font-size:14px;color:#8a8380;margin-bottom:24px;line-height:1.5}
+.cta-card .btn-dark{background:#eeeeee;color:#101010}
+.cta-card .btn-dark:hover{background:#fafafa}
 
 /* === FOOTER === */
-footer{padding:96px 0 48px;border-top:1px solid #1d1a18}
+footer{padding:64px 0 32px;border-top:1px solid #1d1a18}
 footer .container{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
-footer h4{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#eeeeee;margin-bottom:20px;font-weight:500}
-footer a{display:block;font-size:14px;color:#8a8380;margin-bottom:12px;transition:color .15s cubic-bezier(.4,0,.2,1)}
+footer h4{font-family:Geist Mono,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#eeeeee;margin-bottom:16px;font-weight:500}
+footer a{display:block;font-size:14px;color:#8a8380;margin-bottom:10px;transition:color .15s cubic-bezier(.4,0,.2,1)}
 footer a:hover{color:#eeeeee}
 footer p{font-size:14px;color:#4d4947;line-height:1.5}
-footer .footer-bottom{margin-top:64px;padding-top:24px;border-top:1px solid #1d1a18;display:flex;justify-content:space-between;align-items:center}
+footer .footer-bottom{margin-top:48px;padding-top:20px;border-top:1px solid #1d1a18;display:flex;justify-content:space-between;align-items:center}
 footer .footer-bottom p{font-size:12px;color:#4d4947}
 
 /* === REVEAL ANIMATIONS === */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.1s}
-.reveal-delay-2{transition-delay:.2s}
-.reveal-delay-3{transition-delay:.3s}
-.reveal-delay-4{transition-delay:.4s}
+.reveal-delay-1{transition-delay:.08s}
+.reveal-delay-2{transition-delay:.16s}
+.reveal-delay-3{transition-delay:.24s}
 
 /* === RESPONSIVE === */
 @media(max-width:1024px){
-  .hero .container{grid-template-columns:1fr;gap:48px}
-  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .hero .container{grid-template-columns:1fr;gap:40px}
+  .hero-canvas{display:none}
+  .feature-split{grid-template-columns:1fr}
+  .feature-side{flex-direction:row}
   .metrics-grid{grid-template-columns:repeat(2,1fr)}
   .metric-tile:nth-child(2){border-right:none}
   .metric-tile:nth-child(3),.metric-tile:nth-child(4){border-top:1px solid #1d1a18}
   footer .container{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:768px){
-  .section{padding:64px 0}
-  .hero{padding:120px 0 64px}
-  nav .nav-links{display:none}
-  .pipeline-grid{grid-template-columns:1fr;gap:16px}
-  .features-grid{grid-template-columns:1fr}
+  .section{padding:56px 0}
+  .hero{padding:100px 0 56px;min-height:auto}
+  nav .nav-links,nav .nav-actions{display:none}
+  .nav-toggle{display:flex}
+  .pipeline-grid{grid-template-columns:1fr;gap:14px}
+  .feature-side{flex-direction:column}
   .metrics-grid{grid-template-columns:1fr}
   .metric-tile{border-right:none;border-bottom:1px solid #1d1a18}
   .metric-tile:last-child{border-bottom:none}
-  .cta-card{padding:32px 24px}
-  footer .container{grid-template-columns:1fr;gap:32px}
+  .cta-card{padding:28px 20px}
+  footer .container{grid-template-columns:1fr;gap:28px}
   .logo-strip .container{justify-content:center;gap:24px}
 }
 </style>
@@ -176,31 +199,44 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
       <a href="#docs">Docs</a>
     </div>
     <div class="nav-actions">
-      <a href="#" class="btn btn-ghost btn-mono">Log in</a>
-      <a href="#" class="btn btn-light btn-mono">Get started</a>
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-ghost btn-mono">GitHub</a>
+      <a href="#docs" class="btn btn-dark btn-mono">Get started</a>
     </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#pipeline" onclick="closeMenu()">Pipeline</a>
+  <a href="#features" onclick="closeMenu()">Features</a>
+  <a href="#metrics" onclick="closeMenu()">Metrics</a>
+  <a href="#docs" onclick="closeMenu()">Docs</a>
+  <a href="https://github.com/shadcn/improve" target="_blank">GitHub</a>
+</div>
+
 <!-- HERO -->
 <section class="hero" id="hero">
+  <canvas class="hero-canvas" id="hero-canvas"></canvas>
   <div class="container">
     <div class="hero-content">
-      <div class="section-eyebrow reveal"><span class="dot orange"></span> AI codebase auditor</div>
-      <h1 class="reveal reveal-delay-1">The plan <br>is the <span class="highlight">product</span></h1>
-      <p class="reveal reveal-delay-2">improve audits your codebase with premium models, then writes detailed execution plans that cheaper models can follow. Stop guessing — start executing.</p>
-      <div class="btn-group reveal reveal-delay-3">
-        <a href="#" class="btn btn-light btn-mono">Get started</a>
-        <a href="#" class="btn btn-ghost btn-mono">View on GitHub</a>
+      <h1 class="reveal">The plan<br>is the <span class="highlight">product</span></h1>
+      <p class="reveal reveal-delay-1">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
+      <div class="btn-group reveal reveal-delay-2">
+        <a href="#docs" class="btn btn-dark btn-mono">Get started</a>
+        <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-ghost btn-mono">GitHub &nearr;</a>
       </div>
+      <p class="hero-sub reveal reveal-delay-3">by shadcn &middot; MIT License</p>
     </div>
-    <div class="reveal reveal-delay-2">
+    <div class="reveal reveal-delay-1">
       <div class="terminal" id="hero-terminal">
         <div class="terminal-header">
           <span class="terminal-dot red"></span>
           <span class="terminal-dot yellow"></span>
           <span class="terminal-dot green"></span>
-          <span class="terminal-title">improve audit — src/</span>
+          <span class="terminal-title">improve audit &mdash; src/</span>
         </div>
         <div class="terminal-body" id="terminal-body">
           <div class="terminal-line" style="animation-delay:.2s">
@@ -208,24 +244,24 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
             <span class="terminal-output"><span class="cmd">improve audit ./src</span></span>
           </div>
           <div class="terminal-line" style="animation-delay:.6s">
-            <span class="terminal-prompt">→</span>
+            <span class="terminal-prompt">&rarr;</span>
             <span class="terminal-output info">Scanning 147 files across 12 modules...</span>
           </div>
           <div class="terminal-line" style="animation-delay:1s">
-            <span class="terminal-prompt">→</span>
+            <span class="terminal-prompt">&rarr;</span>
             <span class="terminal-output info">Loading model: Claude Opus 4.5</span>
           </div>
           <div class="terminal-line" style="animation-delay:1.4s">
-            <span class="terminal-prompt">→</span>
+            <span class="terminal-prompt">&rarr;</span>
             <span class="terminal-output warn">! Found 23 patterns requiring review</span>
           </div>
           <div class="terminal-line" style="animation-delay:1.8s">
-            <span class="terminal-prompt">→</span>
+            <span class="terminal-prompt">&rarr;</span>
             <span class="terminal-output info">Generating execution plan...</span>
           </div>
           <div class="terminal-line" style="animation-delay:2.2s">
-            <span class="terminal-prompt">✓</span>
-            <span class="terminal-output ok">Plan ready — 7.2k tokens, 12 steps</span>
+            <span class="terminal-prompt">&check;</span>
+            <span class="terminal-output ok">Plan ready &mdash; 7.2k tokens, 12 steps</span>
           </div>
           <div class="terminal-line" style="animation-delay:2.4s">
             <span class="terminal-prompt">$</span>
@@ -252,61 +288,60 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
 <!-- PIPELINE -->
 <section class="section" id="pipeline">
   <div class="container">
-    <div class="section-eyebrow reveal"><span class="dot orange"></span> How it works</div>
-    <h2 class="reveal reveal-delay-1" style="font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;max-width:640px;margin-bottom:8px">Three commands, one pipeline</h2>
-    <p class="reveal reveal-delay-2" style="font-size:16px;color:#8a8380;max-width:520px;line-height:1.5">improve doesn't just fix code. It audits, plans, and executes — turning expensive model runs into reusable blueprints.</p>
+    <div class="section-eyebrow reveal"><span class="dot"></span> How it works</div>
+    <h2 class="reveal reveal-delay-1" style="font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;max-width:560px;margin-bottom:8px">Three commands,<br>one pipeline</h2>
+    <p class="reveal reveal-delay-2" style="font-size:15px;color:#8a8380;max-width:480px;line-height:1.5">improve doesn't just fix code. It audits, plans, and executes &mdash; turning expensive model runs into reusable blueprints.</p>
     
     <div class="pipeline-grid">
       <div class="pipeline-step reveal reveal-delay-1" data-step="1">
         <div class="step-status"><span class="status-dot"></span> Step 01</div>
         <div class="step-num">01</div>
         <h3>Deep audit</h3>
-        <p>improve scans every file, analyzes architecture, dependency graphs, and surfaces hidden issues that context-window models miss.</p>
+        <p>Scans every file, analyzes architecture and dependency graphs, surfaces hidden issues that context-window models miss.</p>
       </div>
       <div class="pipeline-step reveal reveal-delay-2" data-step="2">
         <div class="step-status"><span class="status-dot"></span> Step 02</div>
         <div class="step-num">02</div>
         <h3>Execution plan</h3>
-        <p>A complete, step-by-step plan with file paths, diffs, and rationale. Thousands of tokens of structured intent — not a vague suggestion.</p>
+        <p>A complete, step-by-step plan with file paths, diffs, and rationale. Not a vague suggestion.</p>
       </div>
       <div class="pipeline-step reveal reveal-delay-3" data-step="3">
         <div class="step-status"><span class="status-dot"></span> Step 03</div>
         <div class="step-num">03</div>
         <h3>Cheap execution</h3>
-        <p>Feed the plan to any model — even lightweight ones produce production-grade changes because the thinking is already done.</p>
+        <p>Feed the plan to any model &mdash; even lightweight ones produce production-grade changes.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
+<!-- FEATURES (asymmetric split, not 3 identical cards) -->
 <section class="section" id="features">
   <div class="container">
-    <div class="section-eyebrow reveal"><span class="dot green"></span> Why improve</div>
-    <h2 class="reveal reveal-delay-1" style="font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;max-width:640px;margin-bottom:8px">Spend once on thinking,<br>execute anywhere</h2>
-    <p class="reveal reveal-delay-2" style="font-size:16px;color:#8a8380;max-width:520px;line-height:1.5">The insight: premium models are expensive but brilliant. Cheap models are fast but dumb. improve bridges the gap.</p>
+    <h2 class="reveal" style="font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;max-width:560px;margin-bottom:8px">Spend once on thinking,<br>execute anywhere</h2>
+    <p class="reveal reveal-delay-1" style="font-size:15px;color:#8a8380;max-width:480px;line-height:1.5">Premium models are expensive but brilliant. Cheap models are fast but dumb. improve bridges the gap.</p>
     
-    <div class="features-grid">
-      <div class="feature-card reveal reveal-delay-1">
-        <div class="icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M14 8c0 3.314-2.686 6-6 6"/><path d="M2 8c0-3.314 2.686-6 6-6"/><path d="M8 14V2"/><circle cx="8" cy="8" r="2"/></svg>
+    <div class="feature-split">
+      <div class="feature-main reveal reveal-delay-1">
+        <div>
+          <h3>Model-agnostic plans</h3>
+          <p>Your audit plan works with any downstream model. Not locked into a single provider or pricing tier. One Claude Opus run powers 50+ GPT-4o-mini executions.</p>
+          <div class="feature-code">
+            <span style="color:#8a8380"># plan output</span><br>
+            <span style="color:#eeeeee">improve plan --model opus-4</span><br>
+            <span style="color:#a0ca92">&check; 7.2k tokens &middot; 12 steps &middot; ready</span>
+          </div>
         </div>
-        <h3>Model-agnostic plans</h3>
-        <p>Your audit plan works with any downstream model. Not locked into a single provider or pricing tier.</p>
       </div>
-      <div class="feature-card reveal reveal-delay-2">
-        <div class="icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 3h10v10H3z"/><path d="M6 6h4v4H6z"/><path d="M2 12h12"/><path d="M2 4h12"/></svg>
+      <div class="feature-side">
+        <div class="feature-side-card reveal reveal-delay-2">
+          <h4>Structured output</h4>
+          <p>Every plan includes exact file paths, diff snippets, dependency order, and test instructions. No ambiguity.</p>
         </div>
-        <h3>Structured output</h3>
-        <p>Every plan includes exact file paths, diff snippets, dependency order, and test instructions. No ambiguity.</p>
-      </div>
-      <div class="feature-card reveal reveal-delay-3">
-        <div class="icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="6" r="3"/><path d="M5.5 9.5L8 14l2.5-4.5"/></svg>
+        <div class="feature-side-card reveal reveal-delay-3">
+          <h4>Cost-optimized</h4>
+          <p>One $0.50 audit powers dozens of $0.01 runs. Your budget goes further when thinking is reusable.</p>
         </div>
-        <h3>Cost-optimized</h3>
-        <p>One $0.50 Claude Opus audit can power 50+ $0.01 cheap-model runs. Your budget goes further.</p>
       </div>
     </div>
   </div>
@@ -315,10 +350,9 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
 <!-- METRICS -->
 <section class="section" id="metrics">
   <div class="container">
-    <div class="section-eyebrow reveal"><span class="dot orange"></span> Performance</div>
-    <h2 class="reveal reveal-delay-1" style="font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:8px">Built for production codebases</h2>
+    <h2 class="reveal" style="font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;letter-spacing:-.02em;line-height:1.1;margin-bottom:8px">Built for production codebases</h2>
     
-    <div class="metrics-grid reveal reveal-delay-2">
+    <div class="metrics-grid reveal reveal-delay-1">
       <div class="metric-tile">
         <div class="metric-label">Files per audit</div>
         <div class="metric-value"><span class="counter" data-target="15000">0</span>+</div>
@@ -331,13 +365,13 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
       </div>
       <div class="metric-tile">
         <div class="metric-label">Cost per audit</div>
-        <div class="metric-value">$<span class="counter" data-target="047">0</span></div>
+        <div class="metric-value">$<span class="counter" data-target="0">0</span>.<span class="counter" data-target="50">0</span></div>
         <div class="metric-trend">&#9660; vs. alternatives</div>
       </div>
       <div class="metric-tile">
-        <div class="metric-label">Downstream value</div>
-        <div class="metric-value"><span class="counter" data-target="50">0</span>&times;</div>
-        <div class="metric-trend">&#9650; Reuse multiplier</div>
+        <div class="metric-label">Model support</div>
+        <div class="metric-value"><span class="counter" data-target="12">0</span>+</div>
+        <div class="metric-trend">&#9650; Providers</div>
       </div>
     </div>
   </div>
@@ -347,10 +381,9 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
 <section class="cta-section" id="docs">
   <div class="container">
     <div class="cta-card reveal">
-      <div class="eyebrow"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:#ee6018;display:inline-block"></span> Ship smarter</div>
-      <h2>Stop burning credits&nbsp;on guesses</h2>
-      <p>improve turns expensive model runs into reusable execution plans. One audit, unlimited downstream&nbsp;executions.</p>
-      <a href="#" class="btn btn-dark btn-mono" style="height:44px;padding:0 24px">Get started &rarr;</a>
+      <h2>Stop burning credits<br>on guesses</h2>
+      <p>improve turns expensive model runs into reusable execution plans. One audit, unlimited downstream executions.</p>
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-dark btn-mono" style="height:44px;padding:0 24px">Get started &rarr;</a>
     </div>
   </div>
 </section>
@@ -364,22 +397,21 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
     </div>
     <div>
       <h4>Product</h4>
-      <a href="#">Pipeline</a>
-      <a href="#">Features</a>
-      <a href="#">Pricing</a>
-      <a href="#">Documentation</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#features">Features</a>
+      <a href="#docs">Get started</a>
     </div>
     <div>
       <h4>Community</h4>
-      <a href="#">GitHub</a>
+      <a href="https://github.com/shadcn/improve" target="_blank">GitHub</a>
       <a href="#">Discord</a>
       <a href="#">Twitter</a>
     </div>
     <div>
-      <h4>Company</h4>
-      <a href="#">About</a>
-      <a href="#">Blog</a>
-      <a href="#">Contact</a>
+      <h4>Resources</h4>
+      <a href="#">Documentation</a>
+      <a href="#">Changelog</a>
+      <a href="#">License</a>
     </div>
     <div class="footer-bottom" style="grid-column:1/-1">
       <p>&copy; 2026 improve. Built by shadcn.</p>
@@ -388,66 +420,125 @@ footer .footer-bottom p{font-size:12px;color:#4d4947}
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
 'use strict';
 
-// Terminal line stagger (visible on load)
-document.querySelectorAll('.terminal-line').forEach((el,i)=>{
-  el.style.setProperty('--delay',(i*0.3)+'s');
-});
+/* ===== THREE.JS HERO PARTICLES ===== */
+(function(){
+  var canvas = document.getElementById('hero-canvas');
+  if(!canvas || !window.THREE) return;
+  try {
+    var renderer = new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(50,1,.1,100);
+    camera.position.z = 5;
+    var geo = new THREE.TorusKnotGeometry(1.2,.35,128,32);
+    var mat = new THREE.MeshPhysicalMaterial({color:0x1d1a18,metalness:.6,roughness:.2,emissive:0x101010,emissiveIntensity:.15,wireframe:true});
+    var mesh = new THREE.Mesh(geo,mat);
+    scene.add(mesh);
+    /* particle field */
+    var pGeo = new THREE.BufferGeometry();
+    var pCount = 200;
+    var pPos = new Float32Array(pCount*3);
+    for(var i=0;i<pCount*3;i++) pPos[i]=(Math.random()-.5)*8;
+    pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+    var pMat = new THREE.PointsMaterial({color:0x3d3a39,size:0.015,transparent:true,opacity:.6});
+    scene.add(new THREE.Points(pGeo,pMat));
+    function resize(){
+      var w=canvas.clientWidth, h=canvas.clientHeight;
+      renderer.setSize(w,h,false);
+      camera.aspect=w/h;camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize',resize);
+    var mouse={x:0,y:0};
+    document.addEventListener('mousemove',function(e){mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1;});
+    var scrollProg=0;
+    window.addEventListener('scroll',function(){scrollProg=window.scrollY/(window.innerHeight||1);});
+    var rafId;
+    function animate(){
+      rafId=requestAnimationFrame(animate);
+      var t=performance.now()*0.0005;
+      mesh.rotation.x=t*.3;
+      mesh.rotation.y=t*.5;
+      mesh.position.y=scrollProg*1.5;
+      mesh.position.x=mouse.x*.15;
+      mat.emissiveIntensity=.1+Math.sin(t*2)*.05;
+      /* camera micro-drift */
+      camera.position.x=Math.sin(t*.7)*.08;
+      camera.position.y=Math.cos(t*.5)*.06;
+      renderer.render(scene,camera);
+    }
+    animate();
+    /* cleanup on leave */
+    document.addEventListener('visibilitychange',function(){
+      if(document.hidden){cancelAnimationFrame(rafId);}
+      else{animate();}
+    });
+  }catch(e){}
+})();
 
-// Scroll reveal (IntersectionObserver)
-const reveals = document.querySelectorAll('.reveal');
-const ro = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
+/* ===== MOBILE NAV TOGGLE ===== */
+var toggle=document.getElementById('nav-toggle');
+var mobileMenu=document.getElementById('mobile-menu');
+if(toggle&&mobileMenu){
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow=mobileMenu.classList.contains('open')?'hidden':'';
+  });
+}
+window.closeMenu=function(){
+  toggle&&toggle.classList.remove('open');
+  mobileMenu&&mobileMenu.classList.remove('open');
+  document.body.style.overflow='';
+};
+
+/* ===== SCROLL REVEAL ===== */
+var reveals=document.querySelectorAll('.reveal');
+var ro=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
     if(entry.isIntersecting){
       entry.target.classList.add('visible');
       ro.unobserve(entry.target);
     }
   });
 },{threshold:.08,rootMargin:'0px 0px -40px 0px'});
-reveals.forEach(el=>ro.observe(el));
+reveals.forEach(function(el){ro.observe(el);});
 
-// Pipeline scroll trigger — steps activate as they enter viewport
-const pipelineSteps = document.querySelectorAll('.pipeline-step');
-const pipelineObs = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
+/* ===== PIPELINE SCROLL TRIGGER ===== */
+var pipelineSteps=document.querySelectorAll('.pipeline-step');
+var pipelineObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
     if(entry.isIntersecting){
-      const step = entry.target;
-      const idx = parseInt(step.dataset.step);
+      var step=entry.target;
+      var idx=parseInt(step.dataset.step);
       step.classList.add('active');
-      // Cascade: mark as running then done with delay
-      setTimeout(()=>{
-        step.classList.add('running');
-      },300 + idx * 200);
-      setTimeout(()=>{
-        step.classList.remove('running');
-        step.classList.add('done');
-      },2000 + idx * 200);
+      setTimeout(function(){step.classList.add('running');},300+idx*200);
+      setTimeout(function(){step.classList.remove('running');step.classList.add('done');},2000+idx*200);
       pipelineObs.unobserve(step);
     }
   });
 },{threshold:.4});
-pipelineSteps.forEach(el=>pipelineObs.observe(el));
+pipelineSteps.forEach(function(el){pipelineObs.observe(el);});
 
-// Counter animation
-const counters = document.querySelectorAll('.counter');
-const counterObs = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
+/* ===== COUNTER ANIMATION ===== */
+var counters=document.querySelectorAll('.counter');
+var counterObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
     if(entry.isIntersecting){
-      const el = entry.target;
-      const target = parseInt(el.dataset.target);
-      let current = 0;
-      const duration = 1200;
-      const start = performance.now();
+      var el=entry.target;
+      var target=parseInt(el.dataset.target);
+      var duration=1200;
+      var start=performance.now();
       function update(now){
-        const elapsed = now - start;
-        const progress = Math.min(elapsed/duration,1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1-progress,3);
-        current = Math.round(eased * target);
-        el.textContent = current;
+        var elapsed=now-start;
+        var progress=Math.min(elapsed/duration,1);
+        var eased=1-Math.pow(1-progress,3);
+        el.textContent=Math.round(eased*target);
         if(progress<1) requestAnimationFrame(update);
       }
       requestAnimationFrame(update);
@@ -455,25 +546,18 @@ const counterObs = new IntersectionObserver((entries)=>{
     }
   });
 },{threshold:.5});
-counters.forEach(el=>counterObs.observe(el));
+counters.forEach(function(el){counterObs.observe(el);});
 
-// Nav scroll background
-let ticking = false;
-window.addEventListener('scroll',()=>{
+/* ===== NAV SCROLL BG ===== */
+var ticking=false;
+window.addEventListener('scroll',function(){
   if(!ticking){
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(function(){
       document.body.classList.toggle('scrolled',window.scrollY>40);
       ticking=false;
     });
     ticking=true;
   }
-});
-
-// Mechanical hover — button border precision
-document.querySelectorAll('.btn').forEach(btn=>{
-  btn.addEventListener('mouseenter',function(){
-    this.style.transition='background .15s cubic-bezier(.4,0,.2,1),color .15s cubic-bezier(.4,0,.2,1),border-color .15s cubic-bezier(.4,0,.2,1)';
-  });
 });
 
 })();
