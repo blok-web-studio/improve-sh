@@ -1,296 +1,578 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="improve — The plan is the product. Audit with your best, execute with your cheapest.">
-<meta name="theme-color" content="#12130f"><link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23e4dfda'/><text x='16' y='23' font-family='Georgia' font-size='18' fill='%2312130f'>i</text></svg>">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="improve — Use your most capable model to audit your codebase and write implementation plans for cheaper models to execute.">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0c'/><text x='16' y='22' font-family='system-ui' font-size='16' font-weight='700' fill='%2310b981' text-anchor='middle'>i</text></svg>">
 <title>improve — The plan is the product</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 
 <style>
+/* === RESET === */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#12130f;--text:#e4dfda;--border:#3c3c38;--accent:#f5c2c8;--ease:cubic-bezier(.22,1,.36,1)}
-html{background:var(--bg);-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',system-ui,sans-serif;color:var(--text);overflow-x:hidden;background:var(--bg);line-height:1.25}
+:root{--bg:#0a0a0c;--surface:#141417;--border:#1e1e22;--text:#ecedee;--muted:#7a7a8e;--accent:#10b981;--accent-subtle:rgba(16,185,129,.1);--ease:cubic-bezier(.22,1,.36,1);--font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace}
+html{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-display);color:var(--text);overflow-x:hidden;background:var(--bg);line-height:1.6}
 html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-stopped{overflow:hidden}
+::selection{background:var(--accent);color:var(--bg)}
 
-/* THREE.JS CANVAS */
-#three-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* === NAV === */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference}
+.nav-l{font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--text);letter-spacing:-.02em}
+.nav-l em{font-style:normal;color:#10b981}
+.nav-r{display:flex;align-items:center;gap:24px}
+.nav-r a{font-family:var(--font-mono);font-size:12px;color:var(--text);text-decoration:none;opacity:.4;transition:opacity .3s}
+.nav-r a:hover{opacity:.8}
+.nav-r .gh-btn{padding:7px 18px;background:var(--text);color:var(--bg);border-radius:100px;font-weight:500;opacity:1;font-family:var(--font-mono);font-size:12px;transition:opacity .3s,transform .2s var(--ease)}
+.nav-r .gh-btn:hover{opacity:.9;transform:translateY(-1px)}
 
-/* CORNER LAYOUT */
-.corner-tl{position:fixed;top:12px;left:12px;z-index:10;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text)}
-.corner-bl{position:fixed;bottom:12px;left:12px;z-index:10;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text)}
-.corner-br{position:fixed;bottom:12px;right:12px;z-index:10;display:flex;flex-direction:column;gap:4px}
+/* === HERO === */
+.hero{min-height:100dvh;display:flex;align-items:center;padding:120px 32px 80px;position:relative;overflow:hidden}
+#three-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55}
+.hero-inner{max-width:1280px;width:100%;margin:0 auto;position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-text{max-width:580px}
+.hero-kicker{font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:20px;opacity:0}
+.hero-title{font-size:clamp(2.8rem,6vw,4.8rem);font-weight:600;line-height:1.05;letter-spacing:-.04em;color:var(--text);margin-bottom:16px}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line-2{color:var(--accent)}
+.hero-desc{font-size:clamp(.95rem,1.1vw,1.1rem);color:var(--muted);max-width:440px;line-height:1.7;margin-bottom:32px;opacity:0}
+.hero-cta{display:flex;gap:12px;opacity:0}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;font-family:var(--font-mono);font-size:.8rem;font-weight:500;text-decoration:none;border:none;cursor:pointer;transition:transform .25s var(--ease),opacity .25s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#0a0a0c}
+.btn-primary:hover{opacity:.9}
+.btn-ghost{border:1px solid var(--border);color:var(--text);background:transparent}
+.btn-ghost:hover{border-color:rgba(255,255,255,.15)}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;color:var(--muted);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.scroll-hint-line{width:1px;height:32px;background:var(--border);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3}50%{opacity:.8}}
 
-/* PILL BUTTONS */
-.pill{padding:12px 20px;border-radius:9999px;background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;cursor:pointer;transition:opacity .2s;text-decoration:none}
-.pill:hover{opacity:.7}
+/* === SECTIONS === */
+.section{padding:120px 32px;position:relative}
+.section-inner{max-width:1100px;margin:0 auto}
+.section--dark{background:var(--surface)}
+.section-label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:12px;opacity:0}
+.section-title{font-size:clamp(1.8rem,3.5vw,3rem);font-weight:600;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin-bottom:12px;opacity:0}
+.section-desc{font-size:.95rem;color:var(--muted);max-width:480px;line-height:1.7;opacity:0}
 
-/* HERO TEXT */
-.hero-text{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;text-align:center;pointer-events:none}
-.hero-text__label{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text);opacity:.5;margin-bottom:8px}
-.hero-text__title{font-family:'Inter',sans-serif;font-size:clamp(48px,8vw,80px);font-weight:400;line-height:.7;letter-spacing:0;color:var(--text);margin-bottom:16px}
-.hero-text__title .from-left{display:inline-block;transform:translateX(-100%);opacity:0}
-.hero-text__title .from-right{display:inline-block;transform:translateX(100%);opacity:0}
-.hero-text__desc{font-family:'Inter',sans-serif;font-size:16px;line-height:1.25;color:var(--text);opacity:0;max-width:400px;margin:0 auto}
+/* === PIPELINE === */
+.pipeline-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border-radius:14px;overflow:hidden;margin-top:40px;border:1px solid var(--border)}
+.pipeline-step{background:var(--bg);padding:28px 20px;opacity:0}
+.pipeline-step__num{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:.08em;margin-bottom:8px}
+.pipeline-step__title{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
+.pipeline-step__desc{font-size:.75rem;color:var(--muted);line-height:1.5}
 
-/* SECTIONS */
-.s{padding:64px 12px;position:relative;z-index:1;min-height:100vh;display:flex;align-items:center}
-.s-inner{max-width:1200px;margin:0 auto;width:100%}
-.s-label{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text);opacity:.5;margin-bottom:8px}
-.s-title{font-family:'Inter',sans-serif;font-size:clamp(32px,5vw,48px);font-weight:400;line-height:1;color:var(--text);margin-bottom:16px}
-.s-desc{font-family:'Inter',sans-serif;font-size:16px;line-height:1.25;color:var(--text);opacity:.6;max-width:400px}
+/* === FEATURES === */
+.features-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:14px;overflow:hidden;margin-top:40px;border:1px solid var(--border)}
+.feature-card{background:var(--bg);padding:36px 28px;opacity:0}
+.feature-card__icon{width:36px;height:36px;border-radius:10px;background:var(--accent-subtle);border:1px solid rgba(16,185,129,.15);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px;color:var(--accent)}
+.feature-card__title{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
+.feature-card__desc{font-size:.82rem;color:var(--muted);line-height:1.6}
 
-/* CARDS */
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:32px}
-.card{padding:12px;background:transparent;border:none}
-.card__t{font-family:'Inter',sans-serif;font-size:16px;font-weight:400;color:var(--text);margin-bottom:4px}
-.card__d{font-family:'Inter',sans-serif;font-size:16px;line-height:1.25;color:var(--text);opacity:.6}
+/* === TERMINAL DEMO === */
+.terminal{margin-top:40px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg);opacity:0}
+.terminal-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.terminal-dot{width:8px;height:8px;border-radius:50%}
+.terminal-dot--r{background:#ef4444}
+.terminal-dot--y{background:#eab308}
+.terminal-dot--g{background:#10b981}
+.terminal-title{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:8px}
+.terminal-body{padding:20px 24px;font-family:var(--font-mono);font-size:.8rem;line-height:1.7;color:var(--muted)}
+.terminal-body .prompt{color:var(--accent)}
+.terminal-body .cmd{color:var(--text)}
+.terminal-body .output{color:var(--muted);padding-left:14px;border-left:1px solid var(--border);margin:4px 0 12px}
+.terminal-body .highlight{color:var(--accent)}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:32px}
-.stat{text-align:left}
-.stat__v{font-family:'Inter',sans-serif;font-size:clamp(32px,4vw,48px);font-weight:400;line-height:.7;color:var(--text);margin-bottom:4px}
-.stat__l{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text);opacity:.5}
+/* === CTA === */
+.cta-section{text-align:center;padding:140px 32px}
+.cta-title{font-size:clamp(2rem,4vw,3.6rem);font-weight:600;line-height:1.05;letter-spacing:-.03em;color:var(--text);margin-bottom:16px;opacity:0}
+.cta-desc{font-size:1rem;color:var(--muted);max-width:460px;margin:0 auto 32px;line-height:1.6;opacity:0}
+.cta-btn-wrap{opacity:0}
+.install-block{max-width:520px;margin:40px auto 0;opacity:0}
+.install-cmd{display:flex;align-items:center;gap:12px;padding:14px 20px;border:1px solid var(--border);border-radius:10px;font-family:var(--font-mono);font-size:.82rem;color:var(--text);background:var(--surface)}
+.install-cmd .dollar{color:var(--accent)}
+.install-cmd .cmd-text{flex:1}
+.copy-btn{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font-mono);font-size:11px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.cmd-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:12px;max-width:520px;margin-left:auto;margin-right:auto;opacity:0}
+.cmd-item{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-mono);font-size:.72rem;color:var(--text);transition:border-color .2s}
+.cmd-item:hover{border-color:rgba(255,255,255,.12)}
+.cmd-item__label{color:var(--muted);margin-left:auto;font-size:.65rem}
 
-/* INSTALL */
-.install{margin-top:32px;max-width:500px}
-.install__box{border:1px solid var(--border);border-radius:2px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text)}
-.install__box .pr{opacity:.3}
-.cmds{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:12px}
-.cmd{padding:12px;border:1px solid var(--border);border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text)}
-.cmd__n{color:var(--text)}.cmd__d{opacity:.5;margin-left:8px}
+/* === FOOTER === */
+footer{border-top:1px solid var(--border);padding:48px 32px}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.footer-brand{font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--text)}
+.footer-brand em{font-style:normal;color:var(--accent)}
+.footer-text{font-size:.78rem;color:var(--muted)}
+.footer-text a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.footer-text a:hover{border-color:var(--accent)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
 
-/* GREEN BAND */
-.gb{background:var(--accent);padding:64px 12px;position:relative;z-index:1}
-.gb__t{font-family:'Inter',sans-serif;font-size:clamp(32px,5vw,48px);font-weight:400;line-height:1;color:var(--bg);margin-bottom:12px}
-.gb__s{font-family:'Inter',sans-serif;font-size:16px;line-height:1.25;color:var(--bg);opacity:.6;margin-bottom:24px;max-width:400px}
-.btn-drk{padding:16px 24px;background:var(--bg);border:none;border-radius:9999px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--accent);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s}
-.btn-drk:hover{opacity:.7}
-
-/* FOOTER */
-footer{background:var(--bg);padding:32px 12px;position:relative;z-index:1;border-top:1px solid var(--border)}
-.fi{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-.fb{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text)}
-.ft{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);opacity:.5}
-.ft a{color:var(--accent);text-decoration:underline}
-.fl{display:flex;gap:16px}
-.fl a{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:-.6px;color:var(--text);opacity:.5;text-decoration:none;transition:opacity .2s}
-.fl a:hover{opacity:1}
-
-@media(max-width:900px){.cards{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.cmds{grid-template-columns:1fr}.corner-br{display:none}}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.hero-text__title{font-size:clamp(36px,10vw,48px)}.fi{flex-direction:column;gap:16px;text-align:center}}
-@media(prefers-reduced-motion:reduce){#three-canvas{display:none}[data-r]{opacity:1!important;transform:none!important}}
+/* === RESPONSIVE === */
+@media(max-width:1024px){
+  .pipeline-grid{grid-template-columns:repeat(4,1fr)}
+  .pipeline-step:nth-child(n+5){display:none}
+}
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:0}
+  .hero-text{max-width:100%}
+  #three-canvas{opacity:.3}
+  .features-grid{grid-template-columns:1fr}
+  .cmd-grid{grid-template-columns:1fr}
+  .pipeline-grid{grid-template-columns:repeat(3,1fr)}
+  .pipeline-step:nth-child(n+4){display:none}
+}
+@media(max-width:600px){
+  nav{padding:14px 20px}
+  .nav-r a:not(.gh-btn){display:none}
+  .hero{padding:100px 20px 60px}
+  .hero-title{font-size:clamp(2rem,10vw,2.8rem)}
+  .section{padding:80px 20px}
+  .cta-section{padding:100px 20px}
+  .pipeline-grid{grid-template-columns:repeat(2,1fr)}
+  .pipeline-step:nth-child(n+3){display:none}
+  .pipeline-step{padding:20px 16px}
+  .feature-card{padding:28px 20px}
+  footer{padding:32px 20px}
+  .footer-inner{flex-direction:column;gap:16px;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  #three-canvas{display:none}
+  .hero-kicker,.hero-desc,.hero-cta,.scroll-hint,.section-label,.section-title,
+  .section-desc,.pipeline-step,.feature-card,.terminal,.cta-title,.cta-desc,
+  .cta-btn-wrap,.install-block,.cmd-grid{opacity:1!important;transform:none!important}
+  .hero-title .char{opacity:1!important;transform:none!important;filter:none!important}
+}
 </style>
 </head>
 <body>
 
-<canvas id="three-canvas"></canvas>
-
-<div class="corner-tl">IMPROVE</div>
-
-<div class="corner-bl">
-  <div>LOCAL TIME</div>
-  <div id="time" style="font-size:16px;margin-top:4px">--:--</div>
-  <div style="margin-top:8px;opacity:.5">Audit with your best<br>Execute with your cheapest</div>
-</div>
-
-<div class="corner-br">
-  <a href="#install" class="pill">Install</a>
-  <a href="https://github.com/shadcn/improve" class="pill" target="_blank">GitHub</a>
-</div>
-
-<div class="hero-text">
-  <div class="hero-text__label">shadcn / improve</div>
-  <h1 class="hero-text__title">
-    <span class="from-left">The plan</span><br>
-    <span class="from-right">is the product</span>
-  </h1>
-  <p class="hero-text__desc">Use your most capable model to audit your codebase and write implementation plans for cheaper models to execute.</p>
-</div>
+<nav>
+  <div class="nav-l"><em>i</em>mprove</div>
+  <div class="nav-r">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#features">Features</a>
+    <a href="https://github.com/shadcn/improve" class="gh-btn">GitHub</a>
+  </div>
+</nav>
 
 <main>
-  <section class="s" id="explore">
-    <div class="s-inner">
-      <div class="s-label" data-r="f">Explore</div>
-      <h2 class="s-title" data-r="fl">From raw codebase<br>to executable plan</h2>
-      <p class="s-desc" data-r="fr">Seven stages. Verification at every step.</p>
-      <div class="cards">
-        <div class="card" data-r="fu"><div class="card__t">Recon → Audit → Vet</div><div class="card__d">Map the repo, fan out 9 parallel subagents, and vet every finding.</div></div>
-        <div class="card" data-r="fu"><div class="card__t">Prioritize → Plan</div><div class="card__d">Findings ordered by leverage. One file per finding.</div></div>
-        <div class="card" data-r="fu"><div class="card__t">Execute → Reconcile</div><div class="card__d">Cheaper model in isolated worktree. Verify, refresh, unblock.</div></div>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="three-canvas"></canvas>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-kicker">shadcn / improve</div>
+        <h1 class="hero-title" id="hero-title">
+          <span class="line line-1">The plan</span>
+          <span class="line line-2">is the product.</span>
+        </h1>
+        <p class="hero-desc">Use your most capable model to audit your codebase and write implementation plans for cheaper models to execute.</p>
+        <div class="hero-cta">
+          <a href="#install" class="btn btn-primary">Get started</a>
+          <a href="https://github.com/shadcn/improve" class="btn btn-ghost">GitHub →</a>
+        </div>
+      </div>
+      <div></div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-hint-line"></div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="section section--dark" id="pipeline">
+    <div class="section-inner">
+      <div class="section-label">Pipeline</div>
+      <h2 class="section-title">From codebase to plan</h2>
+      <p class="section-desc">Seven stages. One flow. Verification at every step. Every plan is a living document, not a fire-and-forget report.</p>
+      <div class="pipeline-grid">
+        <div class="pipeline-step"><div class="pipeline-step__num">I</div><div class="pipeline-step__title">Recon</div><div class="pipeline-step__desc">Map the repo: stack, conventions, build commands.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">II</div><div class="pipeline-step__title">Audit</div><div class="pipeline-step__desc">Nine parallel subagents across all categories.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">III</div><div class="pipeline-step__title">Vet</div><div class="pipeline-step__desc">Advisor re-reads every cited location.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">IV</div><div class="pipeline-step__title">Prioritize</div><div class="pipeline-step__desc">Impact ÷ effort, weighted by confidence.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">V</div><div class="pipeline-step__title">Plan</div><div class="pipeline-step__desc">One file per finding, self-contained.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">VI</div><div class="pipeline-step__title">Execute</div><div class="pipeline-step__desc">Cheaper model, isolated worktree.</div></div>
+        <div class="pipeline-step"><div class="pipeline-step__num">VII</div><div class="pipeline-step__title">Reconcile</div><div class="pipeline-step__desc">Living documents, not fire-and-forget.</div></div>
       </div>
     </div>
   </section>
 
-  <section class="s">
-    <div class="s-inner">
-      <div class="s-label" data-r="f">In numbers</div>
-      <div class="stats">
-        <div class="stat" data-r="stat"><div class="stat__v" data-c="9">0</div><div class="stat__l">Audit categories</div></div>
-        <div class="stat" data-r="stat"><div class="stat__v" data-c="7">0</div><div class="stat__l">Pipeline stages</div></div>
-        <div class="stat" data-r="stat"><div class="stat__v" data-c="6800">0</div><div class="stat__l">GitHub stars</div></div>
-        <div class="stat" data-r="stat"><div class="stat__v" data-c="1">0</div><div class="stat__l">License (MIT)</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="s" id="plans">
-    <div class="s-inner">
-      <div class="s-label" data-r="f">Plans that execute</div>
-      <h2 class="s-title" data-r="fl">Not essays. Specifications.</h2>
-      <p class="s-desc" data-r="fr">Three properties that make every plan executable.</p>
-      <div class="cards">
-        <div class="card" data-r="fu"><div class="card__t">Self-contained</div><div class="card__d">All context inlined — exact paths, code excerpts, verified commands.</div></div>
-        <div class="card" data-r="fu"><div class="card__t">Verification gates</div><div class="card__d">Every step ends with a command and expected output.</div></div>
-        <div class="card" data-r="fu"><div class="card__t">Hard boundaries</div><div class="card__d">Explicit STOP conditions — no improvisation past competence.</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="s" id="install">
-    <div class="s-inner">
-      <div class="s-label" data-r="f">Quickstart</div>
-      <h2 class="s-title" data-r="fl">Install. Run. Plan.</h2>
-      <p class="s-desc" data-r="fr">Works in any agent that supports Agent Skills format.</p>
-      <div class="install" data-r="fu">
-        <div class="install__box"><span class="pr">$ </span><span id="ic">npx skills add shadcn/improve</span></div>
-        <div class="cmds">
-          <div class="cmd" data-r="fu"><span class="cmd__n">/improve</span><span class="cmd__d">Full audit</span></div>
-          <div class="cmd" data-r="fu"><span class="cmd__n">/improve deep</span><span class="cmd__d">Exhaustive</span></div>
-          <div class="cmd" data-r="fu"><span class="cmd__n">/improve branch</span><span class="cmd__d">Branch scope</span></div>
-          <div class="cmd" data-r="fu"><span class="cmd__n">/improve reconcile</span><span class="cmd__d">Refresh backlog</span></div>
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <div class="section-label">Spec</div>
+      <h2 class="section-title">Plans that execute</h2>
+      <p class="section-desc">Three properties that make every plan executable by a cheaper model without supervision.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">⊡</div>
+          <div class="feature-card__title">Self-contained</div>
+          <div class="feature-card__desc">All context inlined — exact paths, code excerpts, verified commands. No assumptions.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">✓</div>
+          <div class="feature-card__title">Verification gates</div>
+          <div class="feature-card__desc">Every step ends with expected output. The executor knows when it's done right.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">⊟</div>
+          <div class="feature-card__title">Hard boundaries</div>
+          <div class="feature-card__desc">Explicit STOP conditions — the model never improvises beyond the plan.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="gb" data-r="f">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div class="gb__t">The plan is the product</div>
-      <p class="gb__s">MIT &copy; shadcn — built in the open on GitHub.</p>
-      <a href="https://github.com/shadcn/improve" class="btn-drk" target="_blank">View on GitHub →</a>
+  <!-- TERMINAL -->
+  <section class="section section--dark">
+    <div class="section-inner">
+      <div class="section-label">Demo</div>
+      <h2 class="section-title">See it in action</h2>
+      <p class="section-desc">A real plan generated by improve against a production codebase.</p>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot terminal-dot--r"></div>
+          <div class="terminal-dot terminal-dot--y"></div>
+          <div class="terminal-dot terminal-dot--g"></div>
+          <span class="terminal-title">improve — audit result</span>
+        </div>
+        <div class="terminal-body">
+          <span class="prompt">$</span> <span class="cmd">/improve</span>
+          <div class="output">
+            <div>→ Running recon...</div>
+            <div>→ 9 audit agents dispatched</div>
+            <div>→ Found <span class="highlight">14 findings</span> across 6 categories</div>
+            <div>→ Prioritizing by impact ÷ effort</div>
+            <div>→ Generating execution plans...</div>
+            <div style="margin-top:8px"><span class="highlight">Done.</span> 14 plans ready in <span class="highlight">./.improve/plans/</span></div>
+          </div>
+          <span class="prompt">$</span> <span class="cmd">ls .improve/plans/</span>
+          <div class="output">
+            <div>fix/api-rate-limiting.md</div>
+            <div>fix/dependency-audit.md</div>
+            <div>fix/missing-error-handling.md</div>
+            <div>chore/tsconfig-strict.md</div>
+            <div>...</div>
+          </div>
+          <span class="prompt">$</span> <span class="cmd">cat fix/api-rate-limiting.md</span>
+          <div class="output">
+            <div><span style="opacity:.6"># Plan: API Rate Limiting</span></div>
+            <div><span style="opacity:.6">## Steps</span></div>
+            <div><span style="opacity:.6">1. Install @upstash/ratelimit</span></div>
+            <div><span style="opacity:.6">2. Wrap /api/* routes</span></div>
+            <div><span style="opacity:.6">3. Verify: 429 on > 100 req/min</span></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- CTA / INSTALL -->
+  <section class="section" id="install">
+    <div class="section-inner" style="text-align:center">
+      <h2 class="cta-title">Ready to improve?</h2>
+      <p class="cta-desc">Works in any agent that supports the Agent Skills format. One command to start.</p>
+      <div class="cta-btn-wrap">
+        <a href="https://github.com/shadcn/improve" class="btn btn-primary">Get started on GitHub</a>
+      </div>
+      <div class="install-block">
+        <div class="install-cmd">
+          <span class="dollar">$</span>
+          <span class="cmd-text" id="cmd-text">npx skills add shadcn/improve</span>
+          <button class="copy-btn" onclick="copyCmd()">Copy</button>
+        </div>
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-item"><span style="opacity:.4">$</span> /improve<span class="cmd-item__label">Full audit</span></div>
+        <div class="cmd-item"><span style="opacity:.4">$</span> /improve deep<span class="cmd-item__label">Exhaustive</span></div>
+        <div class="cmd-item"><span style="opacity:.4">$</span> /improve branch<span class="cmd-item__label">Branch scope</span></div>
+        <div class="cmd-item"><span style="opacity:.4">$</span> /improve reconcile<span class="cmd-item__label">Refresh plans</span></div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <div class="fi">
-    <div class="fb">improve</div>
-    <p class="ft">MIT &copy; shadcn &middot; <a href="https://github.com/shadcn/improve">GitHub</a></p>
-    <div class="fl"><a href="https://github.com/shadcn/improve">GitHub</a><a href="https://agentskills.io">Agent Skills</a></div>
+  <div class="footer-inner">
+    <div class="footer-brand"><em>i</em>mprove</div>
+    <p class="footer-text">MIT &copy; shadcn · <a href="https://github.com/shadcn/improve">GitHub</a></p>
+    <div class="footer-links">
+      <a href="https://github.com/shadcn/improve">Source</a>
+      <a href="https://agentskills.io">Agent Skills</a>
+    </div>
   </div>
 </footer>
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
-const lenis=new Lenis({autoRaf:false,lerp:.09});
-lenis.on('scroll',ScrollTrigger.update);
-gsap.ticker.add(t=>lenis.raf(t*1000));
+
+// === LENIS ===
+const lenis = new Lenis({ autoRaf: false, lerp: 0.08 });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(t => lenis.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 
-// === THREE.JS 3D CUBE CLUSTER ===
-const canvas=document.getElementById('three-canvas');
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+// === THREE.JS: TORUS KNOT ===
+const canvas = document.getElementById('three-canvas');
+const parent = canvas.parentElement;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, parent.offsetWidth / parent.offsetHeight, 0.1, 100);
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 
-// Create cube cluster
-const cubes=[];
-const cubeGeo=new THREE.BoxGeometry(1,1,1);
-const cubeMat=new THREE.MeshBasicMaterial({color:0xe4dfda,wireframe:true});
-const accentMat=new THREE.MeshBasicMaterial({color:0xf5c2c8,wireframe:true});
-
-for(let i=0;i<8;i++){
-  const mat=i%3===0?accentMat:cubeMat;
-  const cube=new THREE.Mesh(cubeGeo,mat);
-  cube.position.set(
-    (Math.random()-.5)*4,
-    (Math.random()-.5)*4,
-    (Math.random()-.5)*4
-  );
-  cube.rotation.set(
-    Math.random()*Math.PI,
-    Math.random()*Math.PI,
-    Math.random()*Math.PI
-  );
-  cube.userData={
-    rotSpeed:{x:(Math.random()-.5)*.01,y:(Math.random()-.5)*.01},
-    floatSpeed:Math.random()*.002+.001,
-    floatOffset:Math.random()*Math.PI*2
-  };
-  cubes.push(cube);
-  scene.add(cube);
+function resizeScene() {
+  const rect = parent.getBoundingClientRect();
+  camera.aspect = rect.width / rect.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(rect.width, rect.height);
 }
+resizeScene();
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+camera.position.set(0, 0, 5.5);
 
-camera.position.z=6;
+// Torus Knot
+const knotGeo = new THREE.TorusKnotGeometry(0.9, 0.35, 180, 24);
+const knotMat = new THREE.MeshPhysicalMaterial({
+  color: 0x10b981,
+  metalness: 0.4,
+  roughness: 0.25,
+  transparent: true,
+  opacity: 0.7,
+  emissive: 0x10b981,
+  emissiveIntensity: 0.08,
+  clearcoat: 0.3,
+  clearcoatRoughness: 0.4,
+});
+const torusKnot = new THREE.Mesh(knotGeo, knotMat);
+scene.add(torusKnot);
+
+// Inner glow shell (slightly smaller, brighter, more transparent)
+const innerGeo = new THREE.TorusKnotGeometry(0.85, 0.32, 120, 16);
+const innerMat = new THREE.MeshBasicMaterial({
+  color: 0x10b981,
+  transparent: true,
+  opacity: 0.15,
+  wireframe: true,
+});
+const innerKnot = new THREE.Mesh(innerGeo, innerMat);
+scene.add(innerKnot);
+
+// Particles
+const particleCount = 400;
+const particleGeo = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 12;
+}
+particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const particleMat = new THREE.PointsMaterial({
+  color: 0x555577,
+  size: 0.02,
+  transparent: true,
+  opacity: 0.6,
+  sizeAttenuation: true,
+});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
 
 // Mouse tracking
-let mouseX=0,mouseY=0;
-document.addEventListener('mousemove',e=>{
-  mouseX=(e.clientX/innerWidth-.5)*2;
-  mouseY=(e.clientY/innerHeight-.5)*2;
+let mouseX = 0, mouseY = 0;
+let targetX = 0, targetY = 0;
+document.addEventListener('mousemove', (e) => {
+  const rect = parent.getBoundingClientRect();
+  mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+  mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
 });
 
 // Animation loop
-function animate(){
-  requestAnimationFrame(animate);
-  const time=Date.now()*.001;
+function animate3d() {
+  requestAnimationFrame(animate3d);
   
-  cubes.forEach((cube,i)=>{
-    cube.rotation.x+=cube.userData.rotSpeed.x;
-    cube.rotation.y+=cube.userData.rotSpeed.y;
-    cube.position.y+=Math.sin(time*cube.userData.floatSpeed*100+cube.userData.floatOffset)*.002;
-  });
+  // Smooth mouse follow
+  targetX += (mouseX - targetX) * 0.03;
+  targetY += (mouseY - targetY) * 0.03;
   
-  // Camera follows mouse
-  camera.position.x+=(mouseX*.5-camera.position.x)*.05;
-  camera.position.y+=(-mouseY*.5-camera.position.y)*.05;
-  camera.lookAt(scene.position);
+  torusKnot.rotation.x += 0.003;
+  torusKnot.rotation.y += 0.005;
+  innerKnot.rotation.x = torusKnot.rotation.x;
+  innerKnot.rotation.y = torusKnot.rotation.y;
   
-  renderer.render(scene,camera);
+  torusKnot.rotation.x += targetY * 0.002;
+  torusKnot.rotation.y += targetX * 0.003;
+  innerKnot.rotation.x = torusKnot.rotation.x;
+  innerKnot.rotation.y = torusKnot.rotation.y;
+  
+  // Slow particle rotation
+  particles.rotation.y += 0.0003;
+  particles.rotation.x += 0.0001;
+  
+  renderer.render(scene, camera);
 }
-animate();
+animate3d();
 
-addEventListener('resize',()=>{
-  camera.aspect=innerWidth/innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth,innerHeight);
-});
-
-// === TIME UPDATE ===
-function updateTime(){
-  const now=new Date();
-  const h=String(now.getHours()).padStart(2,'0');
-  const m=String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('time').textContent=`${h}:${m}`;
-}
-updateTime();
-setInterval(updateTime,1000);
+window.addEventListener('resize', resizeScene);
 
 // === HERO ANIMATIONS ===
-gsap.to('.from-left',{x:0,opacity:1,duration:1.2,ease:'power3.out',delay:.5});
-gsap.to('.from-right',{x:0,opacity:1,duration:1.2,ease:'power3.out',delay:.7});
-gsap.to('.hero-text__desc',{opacity:1,duration:1,ease:'power2.out',delay:1.2});
+// Kicker
+gsap.to('.hero-kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+
+// Title: SplitType on each line with chars
+const titleEl = document.getElementById('hero-title');
+const lines = titleEl.querySelectorAll('.line');
+lines.forEach((line, lineIdx) => {
+  const split = new SplitType(line, { types: 'chars' });
+  const chars = split.chars;
+  const fromLeft = lineIdx === 0;
+  gsap.fromTo(chars,
+    { opacity: 0, x: fromLeft ? -40 : 40, filter: 'blur(4px)' },
+    {
+      opacity: 1, x: 0, filter: 'blur(0)',
+      duration: 0.7, stagger: 0.035,
+      ease: 'power3.out',
+      delay: 0.3 + lineIdx * 0.15,
+    }
+  );
+});
+
+// Desc, CTA, scroll hint
+gsap.to('.hero-desc', { opacity: 1, y: 0, duration: 0.6, delay: 0.65, ease: 'power2.out' });
+gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 0.5, delay: 0.85, ease: 'power2.out', stagger: 0.08 });
+gsap.to('.scroll-hint', { opacity: 1, duration: 0.6, delay: 1.4, ease: 'power2.out' });
 
 // === SCROLL REVEALS ===
-gsap.utils.toArray('[data-r="f"]').forEach(el=>{gsap.fromTo(el,{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}})});
-gsap.utils.toArray('[data-r="fl"]').forEach(el=>{gsap.fromTo(el,{opacity:0,x:-50},{opacity:1,x:0,duration:.6,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none'}})});
-gsap.utils.toArray('[data-r="fr"]').forEach(el=>{gsap.fromTo(el,{opacity:0,x:50},{opacity:1,x:0,duration:.6,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none'}})});
-gsap.utils.toArray('[data-r="fu"]').forEach(el=>{gsap.fromTo(el,{opacity:0,y:20},{opacity:1,y:0,duration:.5,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}})});
+// Section labels
+gsap.utils.toArray('.section-label').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
+    once: true,
+  });
+});
 
-gsap.utils.toArray('[data-r="stat"]').forEach(el=>{ScrollTrigger.create({trigger:el,start:'top 86%',once:true,onEnter:()=>{
-  const v=el.querySelector('[data-c]');if(!v)return;const t=parseInt(v.dataset.c),k=t>=1000,e=k?t/1000:t;
-  gsap.fromTo(v,{textContent:0},{textContent:e,duration:1.2,ease:'power2.out',snap:{textContent:k?.1:1},modifiers:{textContent:val=>{const n=parseFloat(val);return k?n.toFixed(1)+'k':Math.round(n)+''}}});
-}})});
+// Section titles
+gsap.utils.toArray('.section-title').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 86%',
+    onEnter: () => {
+      const st = new SplitType(el, { types: 'chars' });
+      gsap.fromTo(st.chars,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.025, ease: 'power2.out' }
+      );
+    },
+    once: true,
+  });
+});
 
-function copyCmd(){const c=document.getElementById('ic').textContent;navigator.clipboard.writeText(c).then(()=>{const b=document.querySelector('.ib-c'),o=b.textContent;b.textContent='Copied!';setTimeout(()=>b.textContent=o,2000)})}
+// Section descs
+gsap.utils.toArray('.section-desc').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 85%',
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
+    once: true,
+  });
+});
+
+// Pipeline steps stagger
+gsap.utils.toArray('.pipeline-step').forEach((el, i) => {
+  ScrollTrigger.create({
+    trigger: el.closest('.pipeline-grid'),
+    start: 'top 85%',
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05, ease: 'power2.out' }),
+    once: true,
+  });
+});
+
+// Feature cards stagger
+gsap.utils.toArray('.feature-card').forEach((el, i) => {
+  ScrollTrigger.create({
+    trigger: el.closest('.features-grid'),
+    start: 'top 85%',
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, delay: i * 0.08, ease: 'power2.out' }),
+    once: true,
+  });
+});
+
+// Terminal
+ScrollTrigger.create({
+  trigger: '.terminal',
+  start: 'top 85%',
+  onEnter: () => gsap.to('.terminal', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }),
+  once: true,
+});
+
+// CTA section
+gsap.utils.toArray('.cta-title').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    onEnter: () => {
+      const st = new SplitType(el, { types: 'chars' });
+      gsap.fromTo(st.chars,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.03, ease: 'power2.out' }
+      );
+    },
+    once: true,
+  });
+});
+gsap.utils.toArray('.cta-desc, .cta-btn-wrap').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
+    once: true,
+  });
+});
+
+// Install block
+ScrollTrigger.create({
+  trigger: '.install-block',
+  start: 'top 88%',
+  onEnter: () => gsap.to('.install-block', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
+  once: true,
+});
+
+// Cmd grid
+ScrollTrigger.create({
+  trigger: '.cmd-grid',
+  start: 'top 92%',
+  onEnter: () => gsap.to('.cmd-grid', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
+  once: true,
+});
+
+// === COPY ===
+function copyCmd() {
+  const text = document.getElementById('cmd-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    btn.style.color = '#10b981';
+    btn.style.borderColor = '#10b981';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
 </script>
 </body>
 </html>
