@@ -56,6 +56,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:fl
 .scroll-hint-line{width:1px;height:32px;background:var(--border);animation:scrollPulse 2s ease-in-out infinite}
 @keyframes scrollPulse{0%,100%{opacity:.3}50%{opacity:.8}}
 
+/* === CURSOR GLOW === */
+#cursor-glow{position:fixed;top:0;left:0;width:600px;height:600px;border-radius:50%;pointer-events:none;z-index:9999;background:radial-gradient(circle,rgba(16,185,129,.06) 0%,transparent 70%);transform:translate(-50%,-50%);opacity:0;transition:opacity .8s}
+@media(max-width:768px){#cursor-glow{display:none}}
+
 /* === SECTIONS === */
 .section{padding:120px 32px;position:relative}
 .section-inner{max-width:1100px;margin:0 auto}
@@ -159,6 +163,7 @@ footer{border-top:1px solid var(--border);padding:48px 32px}
 </head>
 <body>
 
+<div id="cursor-glow"></div>
 <nav>
   <div class="nav-l"><em>i</em>mprove</div>
   <div class="nav-r">
@@ -326,6 +331,67 @@ lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add(t => lenis.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 
+// === CURSOR GLOW ===
+const cursorGlow = document.getElementById('cursor-glow');
+let glowX = -300, glowY = -300;
+let cTargetX = -300, cTargetY = -300;
+
+document.addEventListener('mousemove', e => {
+  cTargetX = e.clientX;
+  cTargetY = e.clientY;
+});
+
+document.addEventListener('mouseenter', () => cursorGlow.style.opacity = '1');
+document.addEventListener('mouseleave', () => cursorGlow.style.opacity = '0');
+
+function animateCursor() {
+  glowX += (cTargetX - glowX) * 0.08;
+  glowY += (cTargetY - glowY) * 0.08;
+  cursorGlow.style.transform = `translate(${glowX - 300}px, ${glowY - 300}px)`;
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// === MAGNETIC BUTTONS ===
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
+});
+
+// === SCROLL VELOCITY SKEW ===
+const skewTargets = document.querySelectorAll('.section-title, .pipeline-step, .feature-card, .terminal');
+let prevVelocity = 0;
+
+lenis.on('scroll', ({ velocity }) => {
+  const absVel = Math.abs(velocity);
+  if (absVel > 4) {
+    const skew = Math.min(velocity * 0.03, 1.5);
+    gsap.to(skewTargets, {
+      skewX: -skew,
+      duration: 0.15,
+      ease: 'none',
+      overwrite: 'auto',
+    });
+    prevVelocity = absVel;
+  } else if (prevVelocity > 0) {
+    prevVelocity = 0;
+    gsap.to(skewTargets, {
+      skewX: 0,
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  }
+});
+
 // === THREE.JS: TORUS KNOT ===
 const canvas = document.getElementById('three-canvas');
 const parent = canvas.parentElement;
@@ -388,6 +454,17 @@ const particleMat = new THREE.PointsMaterial({
 const particles = new THREE.Points(particleGeo, particleMat);
 scene.add(particles);
 
+// Individual particle velocities for scroll response
+const particleVelocities = [];
+for (let i = 0; i < particleCount; i++) {
+  particleVelocities.push({
+    x: (Math.random() - 0.5) * 0.002,
+    y: (Math.random() - 0.5) * 0.002,
+    z: (Math.random() - 0.5) * 0.002,
+  });
+}
+const posAttr = particleGeo.attributes.position;
+
 // Mouse tracking
 let mouseX = 0, mouseY = 0;
 let targetX = 0, targetY = 0;
@@ -395,6 +472,15 @@ document.addEventListener('mousemove', (e) => {
   const rect = parent.getBoundingClientRect();
   mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
   mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+});
+
+// Scroll-driven 3D state
+let scrollVelocity3d = 0;
+let scrollOffsetY = 0;
+
+lenis.on('scroll', ({ velocity, progress }) => {
+  scrollVelocity3d = velocity;
+  scrollOffsetY = progress * 5;
 });
 
 // Animation loop
@@ -405,19 +491,46 @@ function animate3d() {
   targetX += (mouseX - targetX) * 0.03;
   targetY += (mouseY - targetY) * 0.03;
   
-  torusKnot.rotation.x += 0.003;
-  torusKnot.rotation.y += 0.005;
+  // Base rotation
+  const scrollBoost = Math.abs(scrollVelocity3d) * 0.0005;
+  torusKnot.rotation.x += 0.003 + scrollBoost;
+  torusKnot.rotation.y += 0.005 + scrollBoost * 1.5;
   innerKnot.rotation.x = torusKnot.rotation.x;
   innerKnot.rotation.y = torusKnot.rotation.y;
   
+  // Mouse influence
   torusKnot.rotation.x += targetY * 0.002;
   torusKnot.rotation.y += targetX * 0.003;
   innerKnot.rotation.x = torusKnot.rotation.x;
   innerKnot.rotation.y = torusKnot.rotation.y;
   
-  // Slow particle rotation
-  particles.rotation.y += 0.0003;
-  particles.rotation.x += 0.0001;
+  // Scroll influence - camera breathes
+  const breathe = Math.sin(scrollOffsetY * 0.5) * 0.2;
+  camera.position.y = breathe;
+  camera.lookAt(0, 0, 0);
+  
+  // Emissive pulses with scroll velocity
+  const pulse = 0.06 + Math.min(Math.abs(scrollVelocity3d) * 0.001, 0.08);
+  knotMat.emissiveIntensity = pulse;
+  
+  // Particles dance with scroll
+  const pData = posAttr.array;
+  const speed = Math.abs(scrollVelocity3d) * 0.00005;
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+    pData[i3] += particleVelocities[i].x + (Math.random() - 0.5) * speed;
+    pData[i3 + 1] += particleVelocities[i].y + (Math.random() - 0.5) * speed;
+    pData[i3 + 2] += particleVelocities[i].z + (Math.random() - 0.5) * speed;
+    
+    // Wrap around
+    if (Math.abs(pData[i3]) > 6) pData[i3] *= -0.9;
+    if (Math.abs(pData[i3 + 1]) > 6) pData[i3 + 1] *= -0.9;
+    if (Math.abs(pData[i3 + 2]) > 6) pData[i3 + 2] *= -0.9;
+  }
+  posAttr.needsUpdate = true;
+  
+  // Particle size pulses with scroll
+  particleMat.size = 0.02 + Math.min(Math.abs(scrollVelocity3d) * 0.00002, 0.015);
   
   renderer.render(scene, camera);
 }
@@ -437,27 +550,52 @@ lines.forEach((line, lineIdx) => {
   const chars = split.chars;
   const fromLeft = lineIdx === 0;
   gsap.fromTo(chars,
-    { opacity: 0, x: fromLeft ? -40 : 40, filter: 'blur(4px)' },
+    { opacity: 0, x: fromLeft ? -50 : 50, filter: 'blur(6px)' },
     {
       opacity: 1, x: 0, filter: 'blur(0)',
-      duration: 0.7, stagger: 0.035,
-      ease: 'power3.out',
-      delay: 0.3 + lineIdx * 0.15,
+      duration: 0.8, stagger: 0.04,
+      ease: 'power4.out',
+      delay: 0.3 + lineIdx * 0.18,
     }
   );
 });
 
 // Desc, CTA, scroll hint
-gsap.to('.hero-desc', { opacity: 1, y: 0, duration: 0.6, delay: 0.65, ease: 'power2.out' });
-gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 0.5, delay: 0.85, ease: 'power2.out', stagger: 0.08 });
-gsap.to('.scroll-hint', { opacity: 1, duration: 0.6, delay: 1.4, ease: 'power2.out' });
+gsap.to('.hero-desc', { opacity: 1, y: 0, duration: 0.7, delay: 0.7, ease: 'power3.out' });
+gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 0.6, delay: 0.9, ease: 'power3.out', stagger: 0.1 });
+gsap.to('.scroll-hint', { opacity: 1, duration: 0.6, delay: 1.6, ease: 'power2.out' });
 
-// === SCROLL REVEALS ===
+// === HERO PARALLAX ON SCROLL ===
+ScrollTrigger.create({
+  trigger: '.hero',
+  start: 'top top',
+  end: 'bottom top',
+  scrub: 1,
+  onUpdate: self => {
+    const p = self.progress;
+    gsap.set('.hero-text', { y: -p * 80, opacity: 1 - p * 0.5 });
+    gsap.set('#three-canvas', { scale: 1 + p * 0.08, opacity: 0.55 - p * 0.35 });
+  },
+});
+
+// === HERO SECTION LABEL PARALLAX ===
+ScrollTrigger.create({
+  trigger: '.section--dark',
+  start: 'top bottom',
+  end: 'top center',
+  scrub: 0.5,
+  onUpdate: self => {
+    gsap.set('.section-label', { y: -self.progress * 20 });
+  },
+});
+
+// === SCROLL REVEALS with SCRUB ===
 // Section labels
 gsap.utils.toArray('.section-label').forEach(el => {
   ScrollTrigger.create({
     trigger: el,
-    start: 'top 88%',
+    start: 'top 90%',
+    end: 'top 70%',
     onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
     once: true,
   });
@@ -467,23 +605,25 @@ gsap.utils.toArray('.section-label').forEach(el => {
 gsap.utils.toArray('.section-title').forEach(el => {
   ScrollTrigger.create({
     trigger: el,
-    start: 'top 86%',
+    start: 'top 88%',
     onEnter: () => {
       const st = new SplitType(el, { types: 'chars' });
       gsap.fromTo(st.chars,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.025, ease: 'power2.out' }
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.03, ease: 'power3.out' }
       );
     },
     once: true,
   });
 });
 
-// Section descs
+// Section descs with scrub
 gsap.utils.toArray('.section-desc').forEach(el => {
   ScrollTrigger.create({
     trigger: el,
     start: 'top 85%',
+    end: 'top 65%',
+    scrub: 0.5,
     onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
     once: true,
   });
@@ -493,8 +633,10 @@ gsap.utils.toArray('.section-desc').forEach(el => {
 gsap.utils.toArray('.pipeline-step').forEach((el, i) => {
   ScrollTrigger.create({
     trigger: el.closest('.pipeline-grid'),
-    start: 'top 85%',
-    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.05, ease: 'power2.out' }),
+    start: 'top 88%',
+    end: 'top 65%',
+    scrub: 0.5,
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.4, delay: i * 0.06, ease: 'power2.out' }),
     once: true,
   });
 });
@@ -503,8 +645,10 @@ gsap.utils.toArray('.pipeline-step').forEach((el, i) => {
 gsap.utils.toArray('.feature-card').forEach((el, i) => {
   ScrollTrigger.create({
     trigger: el.closest('.features-grid'),
-    start: 'top 85%',
-    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, delay: i * 0.08, ease: 'power2.out' }),
+    start: 'top 88%',
+    end: 'top 65%',
+    scrub: 0.5,
+    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.5, delay: i * 0.1, ease: 'power2.out' }),
     once: true,
   });
 });
@@ -512,21 +656,23 @@ gsap.utils.toArray('.feature-card').forEach((el, i) => {
 // Terminal
 ScrollTrigger.create({
   trigger: '.terminal',
-  start: 'top 85%',
+  start: 'top 88%',
+  end: 'top 65%',
+  scrub: 0.5,
   onEnter: () => gsap.to('.terminal', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }),
   once: true,
 });
 
-// CTA section
+// CTA section title
 gsap.utils.toArray('.cta-title').forEach(el => {
   ScrollTrigger.create({
     trigger: el,
-    start: 'top 88%',
+    start: 'top 90%',
     onEnter: () => {
       const st = new SplitType(el, { types: 'chars' });
       gsap.fromTo(st.chars,
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.03, ease: 'power2.out' }
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.035, ease: 'power3.out' }
       );
     },
     once: true,
@@ -564,12 +710,10 @@ function copyCmd() {
     const btn = document.querySelector('.copy-btn');
     const orig = btn.textContent;
     btn.textContent = 'Copied';
-    btn.style.color = '#10b981';
-    btn.style.borderColor = '#10b981';
+    gsap.to(btn, { color: '#10b981', borderColor: '#10b981', duration: 0.15 });
     setTimeout(() => {
       btn.textContent = orig;
-      btn.style.color = '';
-      btn.style.borderColor = '';
+      gsap.to(btn, { color: '', borderColor: '', duration: 0.3 });
     }, 2000);
   });
 }
