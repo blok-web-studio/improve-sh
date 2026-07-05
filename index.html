@@ -4,145 +4,166 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>improve — The plan is the product</title>
+<meta name="description" content="improve audits your codebase with premium models and writes execution plans that cheaper models can follow. By shadcn.">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#0a0a0a;
+  --surface:#111113;
+  --surface2:#18181b;
+  --border:#1e1e22;
+  --border2:#27272a;
+  --text:#fafafa;
+  --text2:#a1a1aa;
+  --text3:#52525b;
+  --accent:#3b82f6;
+  --accent-dim:rgba(59,130,246,.12);
+  --accent-glow:rgba(59,130,246,.25);
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --max-w:1120px;
+  --px:clamp(20px,5vw,48px);
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
 html.lenis,html.lenis body{height:auto}
-.lenis.lenis-smooth{scroll-behavior:auto !important}
-body{background:#000;color:#fff;font-family:Inter,system-ui,sans-serif;font-weight:200;font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 a{color:inherit;text-decoration:none}
 button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
-::selection{background:#8052ff;color:#fff}
-h1,h2,h3,h4{text-wrap:balance}
+img{display:block;max-width:100%}
+::selection{background:var(--accent);color:#fff}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+ul{list-style:none}
 
 @media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
-  .reveal{opacity:1 !important;transform:none !important}
-  #constellation{display:none !important}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal{opacity:1!important;transform:none!important}
+  #hero-canvas{display:none!important}
 }
 
-/* — NAV — */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 0}
-nav .inner{display:flex;align-items:center;justify-content:space-between;max-width:1280px;margin:0 auto;padding:0 36px}
-nav .logo{font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(-8px)}
-nav .links{display:flex;align-items:center;gap:36px}
-nav .links a{font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#9a9a9a;transition:color .2s}
-nav .links a:hover{color:#fff}
-nav .cta-wrap{opacity:0;transform:translateY(-8px)}
-.btn-pill{background:#8052ff;color:#fff;font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;padding:14px 28px;border-radius:9999px;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
-.btn-pill:hover{background:#6b3fe6}
-.btn-pill:active{transform:scale(.97)}
-.nav-bg{position:fixed;top:0;left:0;right:0;height:72px;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:99;opacity:0;pointer-events:none;transition:opacity .3s}
-.nav-bg.visible{opacity:1;pointer-events:auto}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center}
+.nav-bg{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(10,10,10,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:99;opacity:0;pointer-events:none;transition:opacity .3s}
+.nav-bg.show{opacity:1;pointer-events:auto}
+.nav-inner{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 var(--px);display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--text);opacity:0;transform:translateY(-6px)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;font-weight:500;color:var(--text2);transition:color .2s;letter-spacing:.01em}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{opacity:0;transform:translateY(-6px)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.01em;padding:10px 22px;border-radius:8px;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#2563eb;transform:translateY(-1px);box-shadow:0 4px 24px var(--accent-glow)}
+.btn-primary:active{transform:scale(.98)}
+.btn-ghost{color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:#3f3f46}
 .nav-toggle{display:none;flex-direction:column;gap:5px;width:20px}
-.nav-toggle span{display:block;height:1px;background:#fff;transition:transform .25s,opacity .25s}
-.nav-toggle.open span:first-child{transform:translateY(6px) rotate(45deg)}
+.nav-toggle span{display:block;height:1.5px;background:var(--text);border-radius:1px;transition:transform .25s,opacity .25s}
+.nav-toggle.open span:first-child{transform:translateY(6.5px) rotate(45deg)}
 .nav-toggle.open span:nth-child(2){opacity:0}
-.nav-toggle.open span:last-child{transform:translateY(-6px) rotate(-45deg)}
-.mobile-menu{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:98;padding:100px 36px 48px;flex-direction:column}
+.nav-toggle.open span:last-child{transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(10,10,10,.98);z-index:98;padding:80px var(--px) 40px;flex-direction:column;gap:0}
 .mobile-menu.open{display:flex}
-.mobile-menu a{font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#fff;padding:20px 0;border-bottom:1px solid #111;display:block}
+.mobile-menu a{font-size:15px;font-weight:500;color:var(--text);padding:18px 0;border-bottom:1px solid var(--border)}
 
-/* — HERO — */
+/* HERO */
 .hero{position:relative;min-height:100dvh;display:flex;align-items:center;overflow:hidden}
-.hero .container{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1280px;margin:0 auto;padding:0 36px;width:100%}
-.hero-content{position:relative}
-.hero-label{font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#ffb829;margin-bottom:24px;opacity:0}
-.hero h1{font-size:clamp(3rem,7vw,7rem);font-weight:400;line-height:1.05;letter-spacing:-.04em;margin-bottom:28px}
-.hero h1 .line{display:block;overflow:hidden;padding-bottom:6px}
-.hero h1 .line span{display:inline-block}
-.hero h1 .hl{color:#8052ff}
-.hero-sub{font-size:18px;font-weight:200;color:#bdbdbd;line-height:1.5;max-width:440px;margin-bottom:36px;opacity:0}
-.hero-btns{display:flex;gap:16px;align-items:center;opacity:0}
-.hero-meta{font-size:12px;color:#333;margin-top:32px;letter-spacing:.02em;opacity:0}
-#constellation{position:absolute;top:0;right:-5%;width:60%;height:100%;z-index:1;pointer-events:none}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:var(--max-w);margin:0 auto;padding:0 var(--px);width:100%}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:28px;opacity:0}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px;max-width:700px}
+.hero h1 .hl{color:var(--accent)}
+.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text2);max-width:480px;margin-bottom:36px;font-weight:400;line-height:1.65;opacity:0}
+.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0}
+.hero-stars{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-left:4px}
+.hero-stars svg{width:14px;height:14px;fill:#eab308}
+.hero-meta{font-size:12px;color:var(--text3);margin-top:28px;opacity:0;letter-spacing:.02em}
 
-/* — SECTIONS — */
-.section{padding:120px 0}
-.section .container{max-width:1280px;margin:0 auto;padding:0 36px}
-.section-label{font-size:14px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#ffb829;margin-bottom:24px}
-.section h2{font-size:clamp(2rem,4.5vw,4.5rem);font-weight:400;line-height:1.08;letter-spacing:-.035em;margin-bottom:20px;max-width:640px}
-.section>p{font-size:18px;font-weight:200;color:#bdbdbd;line-height:1.5;max-width:520px}
+/* SECTION */
+.section{padding:clamp(80px,10vw,140px) 0}
+.section-inner{max-width:var(--max-w);margin:0 auto;padding:0 var(--px)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section h2{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:16px}
+.section-desc{font-size:17px;color:var(--text2);max-width:520px;line-height:1.65;margin-bottom:clamp(40px,5vw,64px)}
 
-/* — PIPELINE — */
-.pipeline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:60px}
-.pipeline-step{position:relative}
-.pipeline-step .step-num{font-size:72px;font-weight:400;line-height:1;letter-spacing:-.03em;color:#111;margin-bottom:20px;transition:color .4s}
-.pipeline-step.active .step-num{color:#1a1a1a}
-.pipeline-step .step-status{font-size:12px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:8px;transition:color .3s}
-.pipeline-step .step-status .s-dot{width:6px;height:6px;border-radius:50%;background:#333;transition:all .3s}
-.pipeline-step.running .step-status{color:#8052ff}
-.pipeline-step.running .step-status .s-dot{background:#8052ff;box-shadow:0 0 12px rgba(128,82,255,.5)}
-.pipeline-step.done .step-status{color:#15846e}
-.pipeline-step.done .step-status .s-dot{background:#15846e}
-.pipeline-step h3{font-size:24px;font-weight:400;letter-spacing:-.02em;margin-bottom:10px}
-.pipeline-step p{font-size:16px;font-weight:200;color:#9a9a9a;line-height:1.5}
+/* DIVIDER */
+.divider{height:1px;background:var(--border);max-width:var(--max-w);margin:0 auto}
 
-/* — FEATURES — */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:60px}
-.feat-main{position:relative}
-.feat-main h3{font-size:36px;font-weight:400;letter-spacing:-.025em;margin-bottom:16px;line-height:1.15}
-.feat-main>p{font-size:18px;font-weight:200;color:#bdbdbd;line-height:1.5;margin-bottom:24px}
-.feat-code{font-family:ui-monospace,monospace;font-size:14px;background:#080808;border-radius:12px;padding:20px 24px;line-height:1.7;color:#9a9a9a}
-.feat-code .c-prompt{color:#15846e}
-.feat-code .c-cmd{color:#fff}
-.feat-code .c-ok{color:#15846e}
-.feat-code .c-dim{color:#333}
-.feat-side{display:flex;flex-direction:column;gap:48px}
-.feat-card h4{font-size:20px;font-weight:400;letter-spacing:-.01em;margin-bottom:8px}
-.feat-card p{font-size:16px;font-weight:200;color:#9a9a9a;line-height:1.5}
+/* STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border-radius:16px;overflow:hidden}
+.step-card{background:var(--surface);padding:clamp(28px,3vw,40px);position:relative}
+.step-num{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent);margin-bottom:20px;letter-spacing:.05em}
+.step-icon{width:44px;height:44px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.step-icon svg{width:22px;height:22px;color:var(--accent)}
+.step-card h3{font-size:18px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
+.step-card p{font-size:14px;color:var(--text2);line-height:1.6}
 
-/* — METRICS — */
-.metrics{padding:96px 0;border-top:1px solid #111;border-bottom:1px solid #111}
-.metrics .container{max-width:1280px;margin:0 auto;padding:0 36px}
-.metrics h2{font-size:clamp(2rem,4.5vw,4.5rem);font-weight:400;line-height:1.08;letter-spacing:-.035em;margin-bottom:48px}
-.m-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:48px}
-.m-tile{font-variant-numeric:tabular-nums}
-.m-label{font-size:12px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#9a9a9a;margin-bottom:10px}
-.m-value{font-size:48px;font-weight:400;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
-.m-trend{font-size:12px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#15846e}
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--border);border-radius:16px;overflow:hidden}
+.feat-card{background:var(--surface);padding:clamp(28px,3vw,40px)}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.feat-icon svg{width:20px;height:20px;color:var(--accent)}
+.feat-card h3{font-size:17px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+.feat-card p{font-size:14px;color:var(--text2);line-height:1.6}
+.feat-card code{font-family:var(--font-mono);font-size:13px;background:var(--surface2);padding:3px 8px;border-radius:5px;color:var(--accent);border:1px solid var(--border)}
 
-/* — CTA — */
-.cta{padding:120px 0}
-.cta .container{max-width:1280px;margin:0 auto;padding:0 36px;text-align:center}
-.cta h2{font-size:clamp(2rem,4.5vw,4.5rem);font-weight:400;line-height:1.08;letter-spacing:-.035em;margin-bottom:20px}
-.cta p{font-size:18px;font-weight:200;color:#bdbdbd;line-height:1.5;max-width:480px;margin:0 auto 36px}
+/* CODE BLOCK */
+.code-block{margin-top:clamp(40px,5vw,64px);background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.code-header{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.code-dot{width:10px;height:10px;border-radius:50%}
+.code-dot:nth-child(1){background:#ef4444}
+.code-dot:nth-child(2){background:#eab308}
+.code-dot:nth-child(3){background:#22c55e}
+.code-title{font-family:var(--font-mono);font-size:12px;color:var(--text3);margin-left:8px}
+.code-body{padding:20px 24px;font-family:var(--font-mono);font-size:13px;line-height:1.8;color:var(--text2);overflow-x:auto}
+.code-body .prompt{color:var(--accent)}
+.code-body .cmd{color:var(--text)}
+.code-body .ok{color:#22c55e}
+.code-body .dim{color:var(--text3)}
+.code-body .hl{color:var(--accent);font-weight:500}
 
-/* — FOOTER — */
-footer{padding:60px 0 36px;border-top:1px solid #111}
-footer .container{max-width:1280px;margin:0 auto;padding:0 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
-footer h4{font-size:12px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;color:#fff;margin-bottom:16px}
-footer a{display:block;font-size:14px;font-weight:200;color:#9a9a9a;margin-bottom:10px;transition:color .2s}
-footer a:hover{color:#fff}
-footer .desc{font-size:14px;font-weight:200;color:#333;line-height:1.5;max-width:280px}
-footer .bot{margin-top:48px;padding-top:20px;border-top:1px solid #111;display:flex;justify-content:space-between;grid-column:1/-1}
-footer .bot p{font-size:12px;color:#333}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);border-radius:16px;overflow:hidden}
+.stat-card{background:var(--surface);padding:clamp(24px,3vw,36px);text-align:center}
+.stat-value{font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-.03em;color:var(--text);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.stat-label{font-size:13px;color:var(--text3);font-weight:500}
 
-/* — SCROLL PROGRESS — */
-#progress{position:fixed;top:0;left:0;width:100%;height:2px;background:#8052ff;transform-origin:left;transform:scaleX(0);z-index:200}
+/* CTA */
+.cta{text-align:center;padding:clamp(80px,10vw,140px) 0}
+.cta h2{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:16px}
+.cta p{font-size:17px;color:var(--text2);max-width:440px;margin:0 auto 36px;line-height:1.65}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 
-/* — RESPONSIVE — */
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:48px 0 32px}
+.footer-inner{max-width:var(--max-w);margin:0 auto;padding:0 var(--px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-left{display:flex;align-items:center;gap:24px}
+.footer-brand{font-size:14px;font-weight:600;color:var(--text)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-right{font-size:12px;color:var(--text3)}
+
+/* PROGRESS */
+#progress{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:left;transform:scaleX(0);z-index:200}
+
+/* RESPONSIVE */
 @media(max-width:1024px){
-  .hero .container{grid-template-columns:1fr;gap:40px}
-  #constellation{width:100%;opacity:.15}
-  .pipeline-grid{grid-template-columns:1fr;gap:40px}
-  .feat-grid{grid-template-columns:1fr;gap:40px}
-  .m-grid{grid-template-columns:repeat(2,1fr);gap:36px}
-  footer .container{grid-template-columns:repeat(2,1fr)}
+  .steps-grid,.feat-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:768px){
-  .section{padding:80px 0}
-  .hero{min-height:auto;padding:100px 0 60px}
-  #constellation{display:none}
-  nav .links,nav .cta-wrap{display:none}
+  .nav-links,.nav-cta{display:none}
   .nav-toggle{display:flex}
-  .m-grid{grid-template-columns:1fr}
-  .cta{padding:80px 0}
-  footer .container{grid-template-columns:1fr;gap:32px}
-  footer .bot{flex-direction:column;gap:8px}
+  .stats-grid{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-left{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
@@ -151,157 +172,194 @@ footer .bot p{font-size:12px;color:#333}
 <div id="progress"></div>
 <div class="nav-bg" id="nav-bg"></div>
 
-<nav>
-  <div class="inner">
-    <a href="#" class="logo">improve</a>
-    <div class="links">
-      <a href="#pipeline">Pipeline</a>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">improve</a>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
       <a href="#features">Features</a>
-      <a href="#metrics">Metrics</a>
-      <a href="#docs">Docs</a>
+      <a href="#stats">Stats</a>
+      <a href="https://github.com/shadcn/improve" target="_blank">GitHub</a>
     </div>
-    <div class="cta-wrap">
-      <a href="#docs" class="btn-pill">Get started</a>
+    <div class="nav-cta">
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary">Get started</a>
     </div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="mobile-menu" id="mobile-menu">
-  <a href="#pipeline" onclick="closeMenu()">Pipeline</a>
+  <a href="#how-it-works" onclick="closeMenu()">How it works</a>
   <a href="#features" onclick="closeMenu()">Features</a>
-  <a href="#metrics" onclick="closeMenu()">Metrics</a>
-  <a href="#docs" onclick="closeMenu()">Docs</a>
+  <a href="#stats" onclick="closeMenu()">Stats</a>
+  <a href="https://github.com/shadcn/improve" target="_blank" onclick="closeMenu()">GitHub</a>
+  <a href="https://github.com/shadcn/improve" target="_blank" onclick="closeMenu()" style="color:var(--accent)">Get started</a>
 </div>
 
-<!-- HERO -->
 <section class="hero" id="hero">
-  <canvas id="constellation"></canvas>
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-label">AI codebase auditor</div>
-      <h1>
-        <span class="line"><span>The plan</span></span>
-        <span class="line"><span>is the <span class="hl">product</span></span></span>
-      </h1>
-      <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
-      <div class="hero-btns">
-        <a href="#docs" class="btn-pill">Get started</a>
-        <a href="https://github.com/shadcn/improve" target="_blank" style="font-size:14px;font-weight:400;color:#9a9a9a;transition:color .2s">GitHub &nearr;</a>
-      </div>
-      <p class="hero-meta">by shadcn &middot; MIT License</p>
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
+    <h1>The plan is<br>the <span class="hl">product</span></h1>
+    <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        Get started
+      </a>
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-ghost">View on GitHub</a>
+      <span class="hero-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        6.8k
+      </span>
     </div>
+    <p class="hero-meta">by <strong style="color:var(--text)">shadcn</strong> &middot; MIT License</p>
   </div>
 </section>
 
-<!-- PIPELINE -->
-<section class="section" id="pipeline">
-  <div class="container">
+<div class="divider"></div>
+
+<section class="section" id="how-it-works">
+  <div class="section-inner">
     <div class="section-label">How it works</div>
-    <h2>Three commands,<br>one pipeline</h2>
-    <p>improve doesn't just fix code. It audits, plans, and executes &mdash; turning expensive model runs into reusable blueprints.</p>
-    <div class="pipeline-grid">
-      <div class="pipeline-step" data-step="1">
-        <div class="step-status"><span class="s-dot"></span> Step 01</div>
+    <h2>Three steps,<br>one pipeline</h2>
+    <p class="section-desc">improve doesn't just fix code. It audits, plans, and executes &mdash; turning expensive model runs into reusable blueprints.</p>
+    <div class="steps-grid">
+      <div class="step-card">
         <div class="step-num">01</div>
-        <h3>Deep audit</h3>
-        <p>Scans every file, analyzes architecture and dependency graphs, surfaces hidden issues that context-window models miss.</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <h3>Scan</h3>
+        <p>Deep audit of your entire codebase. Analyzes architecture, dependencies, and surfaces hidden issues that context-window models miss.</p>
       </div>
-      <div class="pipeline-step" data-step="2">
-        <div class="step-status"><span class="s-dot"></span> Step 02</div>
+      <div class="step-card">
         <div class="step-num">02</div>
-        <h3>Execution plan</h3>
-        <p>A complete, step-by-step plan with file paths, diffs, and rationale. Not a vague suggestion.</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+        </div>
+        <h3>Plan</h3>
+        <p>A complete execution plan with file paths, diffs, dependency order, and rationale. Not a vague suggestion &mdash; a real blueprint.</p>
       </div>
-      <div class="pipeline-step" data-step="3">
-        <div class="step-status"><span class="s-dot"></span> Step 03</div>
+      <div class="step-card">
         <div class="step-num">03</div>
-        <h3>Cheap execution</h3>
-        <p>Feed the plan to any model &mdash; even lightweight ones produce production-grade changes.</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>Execute</h3>
+        <p>Feed the plan to any model. Even lightweight ones produce production-grade changes when they follow a clear plan.</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>
+        <span class="code-title">terminal</span>
+      </div>
+      <div class="code-body">
+<span class="dim"># generate an execution plan</span>
+<span class="prompt">$</span> <span class="cmd">improve plan --model opus-4</span>
+<span class="ok">&#10003;</span> <span class="hl">7.2k tokens</span> &middot; 12 steps &middot; ready
+
+<span class="dim"># execute with any downstream model</span>
+<span class="prompt">$</span> <span class="cmd">improve run --model gpt-4o-mini</span>
+<span class="ok">&#10003;</span> 12/12 steps completed &middot; <span class="hl">3 files changed</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
+<div class="divider"></div>
+
 <section class="section" id="features">
-  <div class="container">
+  <div class="section-inner">
     <div class="section-label">Why improve</div>
     <h2>Spend once on thinking,<br>execute anywhere</h2>
-    <p>Premium models are expensive but brilliant. Cheap models are fast but dumb. improve bridges the gap.</p>
+    <p class="section-desc">Premium models are expensive but brilliant. Cheap models are fast but limited. improve bridges the gap.</p>
     <div class="feat-grid">
-      <div class="feat-main">
-        <div>
-          <h3>Model-agnostic plans</h3>
-          <p>Your audit plan works with any downstream model. Not locked into a single provider or pricing tier. One Claude Opus run powers 50+ GPT-4o-mini executions.</p>
-          <div class="feat-code">
-            <span class="c-dim"># plan output</span><br>
-            <span class="c-prompt">$</span> <span class="c-cmd">improve plan --model opus-4</span><br>
-            <span class="c-ok">&check; 7.2k tokens &middot; 12 steps &middot; ready</span>
-          </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg>
         </div>
+        <h3>Model-agnostic plans</h3>
+        <p>Your audit plan works with any downstream model. One Claude Opus run powers 50+ GPT-4o-mini executions. No vendor lock-in.</p>
       </div>
-      <div class="feat-side">
-        <div class="feat-card">
-          <h4>Structured output</h4>
-          <p>Every plan includes exact file paths, diff snippets, dependency order, and test instructions. No ambiguity.</p>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div class="feat-card">
-          <h4>Cost-optimized</h4>
-          <p>One $0.50 audit powers dozens of $0.01 runs. Your budget goes further when thinking is reusable.</p>
+        <h3>Cost-optimized</h3>
+        <p>One <code>$0.50</code> audit powers dozens of <code>$0.01</code> runs. Your budget goes further when thinking is reusable.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
+        <h3>Structured output</h3>
+        <p>Every plan includes exact file paths, diff snippets, dependency order, and test instructions. No ambiguity, no guesswork.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Full codebase scale</h3>
+        <p>Audits 15,000+ files per run. Analyzes architecture, dependency graphs, and cross-module impacts that single-file tools miss.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- METRICS -->
-<section class="metrics" id="metrics">
-  <div class="container">
-    <h2>Built for production codebases</h2>
-    <div class="m-grid">
-      <div class="m-tile">
-        <div class="m-label">Files per audit</div>
-        <div class="m-value"><span class="counter" data-target="15000">0</span>+</div>
-        <div class="m-trend">&#9650; Full repos</div>
+<div class="divider"></div>
+
+<section class="section" id="stats">
+  <div class="section-inner">
+    <div class="section-label">By the numbers</div>
+    <h2>Built for production</h2>
+    <p class="section-desc">improve handles real codebases at scale. Here's what it can do.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value"><span class="counter" data-target="15000">0</span>+</div>
+        <div class="stat-label">Files per audit</div>
       </div>
-      <div class="m-tile">
-        <div class="m-label">Avg. plan tokens</div>
-        <div class="m-value"><span class="counter" data-target="7200">0</span></div>
-        <div class="m-trend">&#9650; Detailed steps</div>
+      <div class="stat-card">
+        <div class="stat-value"><span class="counter" data-target="7200">0</span></div>
+        <div class="stat-label">Avg. plan tokens</div>
       </div>
-      <div class="m-tile">
-        <div class="m-label">Cost per audit</div>
-        <div class="m-value">$0.50</div>
-        <div class="m-trend">&#9660; vs. alternatives</div>
+      <div class="stat-card">
+        <div class="stat-value">$0.50</div>
+        <div class="stat-label">Cost per audit</div>
       </div>
-      <div class="m-tile">
-        <div class="m-label">Model support</div>
-        <div class="m-value"><span class="counter" data-target="12">0</span>+</div>
-        <div class="m-trend">&#9650; Providers</div>
+      <div class="stat-card">
+        <div class="stat-value"><span class="counter" data-target="12">0</span>+</div>
+        <div class="stat-label">Model providers</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta" id="docs">
-  <div class="container">
+<section class="cta" id="cta">
+  <div class="section-inner">
     <h2>Stop burning credits<br>on guesses</h2>
-    <p>improve turns expensive model runs into reusable execution plans. One audit, unlimited downstream executions.</p>
-    <a href="https://github.com/shadcn/improve" target="_blank" class="btn-pill">Get started &rarr;</a>
+    <p>improve turns expensive model runs into reusable execution plans. One audit, unlimited executions.</p>
+    <div class="cta-btns">
+      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary" style="padding:14px 32px;font-size:15px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        Get started on GitHub
+      </a>
+    </div>
   </div>
 </section>
 
-<footer>
-  <div class="container">
-    <div>
-      <h4>improve</h4>
-      <p class="desc">An AI agent skill by shadcn that audits codebases with premium models and writes execution plans for downstream models to follow.</p>
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span class="footer-brand">improve</span>
+      <div class="footer-links">
+        <a href="https://github.com/shadcn/improve" target="_blank">GitHub</a>
+        <a href="#">Docs</a>
+        <a href="#">License</a>
+      </div>
     </div>
-    <div><h4>Product</h4><a href="#pipeline">Pipeline</a><a href="#features">Features</a><a href="#docs">Get started</a></div>
-    <div><h4>Community</h4><a href="https://github.com/shadcn/improve" target="_blank">GitHub</a><a href="#">Discord</a><a href="#">Twitter</a></div>
-    <div><h4>Resources</h4><a href="#">Documentation</a><a href="#">Changelog</a><a href="#">License</a></div>
-    <div class="bot"><p>&copy; 2026 improve. Built by shadcn.</p><p>MIT License</p></div>
+    <div class="footer-right">Built by <a href="https://github.com/shadcn" target="_blank" style="color:var(--text2)">shadcn</a> &middot; MIT</div>
   </div>
 </footer>
 
@@ -314,159 +372,76 @@ footer .bot p{font-size:12px;color:#333}
 'use strict';
 gsap.registerPlugin(ScrollTrigger);
 
-/* ================================================
-   LENIS — synced with GSAP ticker
-   ================================================ */
 var lenis = new Lenis({ autoRaf: false, lerp: 0.08, smoothWheel: true });
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add(function(t){ lenis.raf(t * 1000); });
 gsap.ticker.lagSmoothing(0);
 
-/* ================================================
-   SCROLL PROGRESS
-   ================================================ */
 gsap.to('#progress', { scaleX: 1, ease: 'none', scrollTrigger: {
   trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3
 }});
 
-/* ================================================
-   NAV
-   ================================================ */
-gsap.to('nav .logo', { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.2 });
-gsap.to('nav .cta-wrap', { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.35 });
-ScrollTrigger.create({ start: 'top -60', onUpdate: function(self) {
-  document.getElementById('nav-bg').classList.toggle('visible', self.progress > 0);
+gsap.to('.nav-logo', { y: 0, opacity: 1, duration: .5, ease: 'power3.out', delay: .15 });
+gsap.to('.nav-cta', { y: 0, opacity: 1, duration: .5, ease: 'power3.out', delay: .25 });
+ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
+  document.getElementById('nav-bg').classList.toggle('show', s.progress > 0);
 }});
 
-/* ================================================
-   THREE.JS — PARTICLE CONSTELLATION
-   Thousands of colored triangles forming a brain-like
-   shape. Responds to scroll + mouse.
-   ================================================ */
+/* THREE.JS - PARTICLE GRID TERRAIN */
 (function(){
-  var canvas = document.getElementById('constellation');
-  if(!canvas || !window.THREE) return;
+  var canvas = document.getElementById('hero-canvas');
+  if (!canvas || !window.THREE) return;
   try {
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 0, 5.5);
+    var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    camera.position.set(0, 2.5, 6);
+    camera.lookAt(0, 0, 0);
 
-    /* — Brain-shaped particle constellation — */
-    var pCount = 6000;
-    var positions = new Float32Array(pCount * 3);
-    var colors = new Float32Array(pCount * 3);
-    var sizes = new Float32Array(pCount);
-    var velocities = new Float32Array(pCount * 3);
+    var cols = 60, rows = 40;
+    var count = cols * rows;
+    var positions = new Float32Array(count * 3);
+    var colors = new Float32Array(count * 3);
+    var baseY = new Float32Array(count);
 
-    var palette = [
-      [0.502, 0.322, 1],    // #8052ff violet
-      [1, 0.722, 0.161],    // #ffb829 amber
-      [0.082, 0.518, 0.431],// #15846e teal
-      [0.8, 0.2, 0.6],      // magenta
-      [0.3, 0.4, 1],        // blue
-      [0.6, 0.3, 0.9]       // purple
-    ];
+    var aR = 59/255, aG = 130/255, aB = 246/255;
+    var spacing = 0.18;
+    var oX = -(cols * spacing) / 2;
+    var oZ = -(rows * spacing) / 2;
 
-    for (var i = 0; i < pCount; i++) {
-      /* Spherical base */
-      var theta = Math.random() * Math.PI * 2;
-      var phi = Math.acos(2 * Math.random() - 1);
-      
-      /* Brain shape deformation */
-      var r = 1.6;
-      
-      /* Two hemispheres - central fissure */
-      var hemisphere = Math.cos(theta);
-      var fissure = Math.abs(hemisphere) < 0.15 ? 0.3 : 0;
-      r -= fissure;
-      
-      /* Frontal lobe bulge (front) */
-      var frontal = Math.max(0, Math.cos(theta) * Math.cos(phi));
-      r += frontal * 0.4;
-      
-      /* Occipital lobe (back) */
-      var occipital = Math.max(0, -Math.cos(theta) * Math.cos(phi));
-      r += occipital * 0.2;
-      
-      /* Temporal lobes (sides) */
-      var temporal = Math.abs(Math.sin(theta)) * Math.max(0, -Math.sin(phi) + 0.3);
-      r += temporal * 0.3;
-      
-      /* Cerebellum (back-bottom) */
-      var cerebellum = Math.max(0, -Math.cos(theta)) * Math.max(0, Math.sin(phi) + 0.5);
-      r += cerebellum * 0.25;
-      
-      /* Wrinkles (gyri/sulci) - high frequency noise */
-      var wrinkle1 = Math.sin(theta * 8 + phi * 6) * 0.08;
-      var wrinkle2 = Math.sin(theta * 12 - phi * 9) * 0.05;
-      var wrinkle3 = Math.cos(theta * 15 + phi * 11) * 0.04;
-      r += wrinkle1 + wrinkle2 + wrinkle3;
-      
-      /* Random surface variation */
-      r += (Math.random() - 0.5) * 0.15;
-      
-      /* Convert to 3D coordinates */
-      positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i*3+1] = r * Math.cos(phi) * 0.85;
-      positions[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
-      
-      /* Slow drift velocities */
-      velocities[i*3] = (Math.random() - 0.5) * 0.0008;
-      velocities[i*3+1] = (Math.random() - 0.5) * 0.0008;
-      velocities[i*3+2] = (Math.random() - 0.5) * 0.0008;
-      
-      /* Color from palette */
-      var c = palette[Math.floor(Math.random() * palette.length)];
-      colors[i*3] = c[0];
-      colors[i*3+1] = c[1];
-      colors[i*3+2] = c[2];
-      
-      sizes[i] = 0.018 + Math.random() * 0.015;
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
+        var idx = (i * cols + j) * 3;
+        var x = oX + j * spacing;
+        var z = oZ + i * spacing;
+        positions[idx] = x;
+        positions[idx + 1] = 0;
+        positions[idx + 2] = z;
+        baseY[i * cols + j] = 0;
+
+        var dx = x / ((cols * spacing) / 2);
+        var dz = z / ((rows * spacing) / 2);
+        var dist = Math.sqrt(dx * dx + dz * dz);
+        var fade = Math.max(0, 1 - dist * 0.8);
+        colors[idx] = aR * fade;
+        colors[idx + 1] = aG * fade;
+        colors[idx + 2] = aB * fade;
+      }
     }
 
     var geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
     var mat = new THREE.PointsMaterial({
-      size: 0.03,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
-      sizeAttenuation: true
+      size: 0.035, vertexColors: true, transparent: true,
+      opacity: 0.6, blending: THREE.AdditiveBlending, sizeAttenuation: true
     });
 
-    var particles = new THREE.Points(geo, mat);
-    scene.add(particles);
+    var grid = new THREE.Points(geo, mat);
+    scene.add(grid);
 
-    /* — Ambient scattered particles — */
-    var aCount = 800;
-    var aGeo = new THREE.BufferGeometry();
-    var aPos = new Float32Array(aCount * 3);
-    var aCol = new Float32Array(aCount * 3);
-    for (var i = 0; i < aCount; i++) {
-      aPos[i*3] = (Math.random() - 0.5) * 16;
-      aPos[i*3+1] = (Math.random() - 0.5) * 12;
-      aPos[i*3+2] = (Math.random() - 0.5) * 8;
-      var c = palette[Math.floor(Math.random() * palette.length)];
-      aCol[i*3] = c[0]; aCol[i*3+1] = c[1]; aCol[i*3+2] = c[2];
-    }
-    aGeo.setAttribute('position', new THREE.BufferAttribute(aPos, 3));
-    aGeo.setAttribute('color', new THREE.BufferAttribute(aCol, 3));
-    var aMat = new THREE.PointsMaterial({
-      size: 0.012,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.3,
-      blending: THREE.AdditiveBlending
-    });
-    scene.add(new THREE.Points(aGeo, aMat));
-
-    /* — Resize — */
     function resize() {
       var w = canvas.clientWidth, h = canvas.clientHeight;
       renderer.setSize(w, h, false);
@@ -476,163 +451,103 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(self) {
     resize();
     window.addEventListener('resize', resize);
 
-    /* — Mouse — */
-    var mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+    var mx = 0, my = 0, mtx = 0, mty = 0;
     document.addEventListener('mousemove', function(e) {
-      mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.ty = -(e.clientY / window.innerHeight) * 2 + 1;
+      mtx = (e.clientX / window.innerWidth) * 2 - 1;
+      mty = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
-    /* — Scroll state — */
-    var scrollProgress = 0;
-    var scrollVelocity = 0;
-
+    var scrollProg = 0;
     ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: function(self) {
-        scrollProgress = self.progress;
-        scrollVelocity = Math.abs(self.getVelocity());
-      }
+      trigger: '.hero', start: 'top top', end: 'bottom top',
+      onUpdate: function(s) { scrollProg = s.progress; }
     });
 
-    /* — Render loop — */
+    var posArr = geo.attributes.position.array;
     gsap.ticker.add(function() {
-      var t = performance.now() * 0.0002;
+      var t = performance.now() * 0.001;
+      mx += (mtx - mx) * 0.04;
+      my += (mty - my) * 0.04;
 
-      /* Mouse lerp */
-      mouse.x += (mouse.tx - mouse.x) * 0.04;
-      mouse.y += (mouse.ty - mouse.y) * 0.04;
-
-      /* Constellation rotation - slower to show brain shape */
-      particles.rotation.y = t * 0.3 + scrollProgress * Math.PI * 0.5;
-      particles.rotation.x = Math.sin(t * 0.2) * 0.08 + mouse.y * 0.12 + 0.2;
-      particles.rotation.z = Math.cos(t * 0.15) * 0.04;
-
-      /* Scale with scroll */
-      var velFactor = Math.min(scrollVelocity * 0.00006, 0.2);
-      var baseScale = 1 + scrollProgress * -0.2;
-      particles.scale.setScalar(baseScale + velFactor);
-
-      /* Particle drift */
-      var posArr = geo.attributes.position.array;
-      for (var i = 0; i < pCount * 3; i += 3) {
-        posArr[i] += velocities[i] + Math.sin(t + i * 0.01) * 0.0003;
-        posArr[i+1] += velocities[i+1] + Math.cos(t + i * 0.01) * 0.0003;
-        posArr[i+2] += velocities[i+2];
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
+          var ci = i * cols + j;
+          var idx = ci * 3;
+          var x = posArr[idx];
+          var z = posArr[idx + 2];
+          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 0.12
+            + Math.cos(z * 1.2 + t * 0.6) * 0.1
+            + Math.sin((x + z) * 0.8 + t) * 0.06;
+        }
       }
       geo.attributes.position.needsUpdate = true;
 
-      /* Camera */
-      camera.position.x += (mouse.x * 0.3 - camera.position.x) * 0.03;
-      camera.position.y += (scrollProgress * -1 - camera.position.y) * 0.04;
-      camera.position.z = 5.5 + scrollProgress * -0.8;
-      camera.lookAt(0, scrollProgress * -0.3, 0);
+      grid.rotation.y = mx * 0.15;
+      grid.rotation.x = -0.3 + my * 0.08;
 
-      /* Opacity responds to scroll */
-      mat.opacity = 0.7 + scrollProgress * 0.2;
-      mat.size = 0.025 + velFactor * 0.01;
+      var fade = 1 - scrollProg * 1.5;
+      mat.opacity = Math.max(0, 0.6 * fade);
+      mat.size = 0.035 - scrollProg * 0.01;
 
       renderer.render(scene, camera);
     });
-
-    /* Cleanup */
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) gsap.ticker.sleep();
-      else gsap.ticker.wake();
-    });
-
   } catch(e) {}
 })();
 
-/* ================================================
-   HERO TEXT — chars from bottom
-   ================================================ */
-gsap.from('.hero-label', { y: 16, opacity: 0, duration: 0.5, ease: 'power3.out', delay: 0.1 });
-gsap.from('.hero h1 .line span', {
-  y: '110%', opacity: 0, duration: 0.9, ease: 'power3.out',
-  stagger: 0.15, delay: 0.2
-});
-gsap.from('.hero-sub', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out', delay: 0.7 });
-gsap.from('.hero-btns', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out', delay: 0.85 });
-gsap.from('.hero-meta', { y: 12, opacity: 0, duration: 0.5, ease: 'power3.out', delay: 1 });
+/* HERO TEXT ANIMATIONS */
+gsap.from('.hero-eyebrow', { y: 16, opacity: 0, duration: .5, ease: 'power3.out', delay: .1 });
+gsap.from('.hero h1', { y: 40, opacity: 0, duration: .8, ease: 'power3.out', delay: .2 });
+gsap.from('.hero-sub', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', delay: .5 });
+gsap.from('.hero-btns', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', delay: .65 });
+gsap.from('.hero-meta', { y: 12, opacity: 0, duration: .5, ease: 'power3.out', delay: .8 });
 
-/* Hero parallax */
 gsap.to('.hero-content', {
-  y: -80, ease: 'none',
-  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.5 }
-});
-gsap.to('#constellation', {
-  y: -40, ease: 'none',
+  y: -60, ease: 'none',
   scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.5 }
 });
 
-/* ================================================
-   SECTIONS — reveal on scroll
-   ================================================ */
+/* SECTION REVEALS */
 gsap.utils.toArray('.section-label').forEach(function(el) {
-  gsap.from(el, { y: 16, opacity: 0, duration: 0.5, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
-  });
-});
-gsap.utils.toArray('.section h2').forEach(function(el) {
-  gsap.from(el, { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
-  });
-});
-gsap.utils.toArray('.section > p').forEach(function(el) {
-  gsap.from(el, { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out',
+  gsap.from(el, { y: 16, opacity: 0, duration: .5, ease: 'power3.out',
     scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
   });
 });
-
-/* ================================================
-   PIPELINE — stagger entrance
-   ================================================ */
-gsap.from('.pipeline-step', {
-  y: 60, opacity: 0, duration: 0.8, ease: 'power3.out',
-  stagger: 0.15,
-  scrollTrigger: { trigger: '.pipeline-grid', start: 'top 82%', toggleActions: 'play none none none' }
-});
-
-/* Pipeline status activation */
-var stepObs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      var step = entry.target, idx = parseInt(step.dataset.step);
-      step.classList.add('active');
-      setTimeout(function(){ step.classList.add('running'); }, 300 + idx * 200);
-      setTimeout(function(){ step.classList.remove('running'); step.classList.add('done'); }, 2200 + idx * 200);
-      stepObs.unobserve(step);
-    }
+gsap.utils.toArray('.section h2').forEach(function(el) {
+  gsap.from(el, { y: 30, opacity: 0, duration: .7, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
   });
-}, { threshold: 0.4 });
-document.querySelectorAll('.pipeline-step').forEach(function(el) { stepObs.observe(el); });
-
-/* ================================================
-   FEATURES — stagger
-   ================================================ */
-gsap.from('.feat-main', {
-  y: 50, opacity: 0, duration: 0.8, ease: 'power3.out',
-  scrollTrigger: { trigger: '.feat-grid', start: 'top 82%', toggleActions: 'play none none none' }
 });
+gsap.utils.toArray('.section-desc').forEach(function(el) {
+  gsap.from(el, { y: 20, opacity: 0, duration: .6, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
+  });
+});
+
+/* STEPS */
+gsap.from('.step-card', {
+  y: 40, opacity: 0, duration: .7, ease: 'power3.out', stagger: .12,
+  scrollTrigger: { trigger: '.steps-grid', start: 'top 85%', toggleActions: 'play none none none' }
+});
+
+/* CODE BLOCK */
+gsap.from('.code-block', {
+  y: 30, opacity: 0, duration: .7, ease: 'power3.out',
+  scrollTrigger: { trigger: '.code-block', start: 'top 88%', toggleActions: 'play none none none' }
+});
+
+/* FEATURES */
 gsap.from('.feat-card', {
-  y: 40, opacity: 0, duration: 0.7, ease: 'power3.out',
-  stagger: 0.15,
-  scrollTrigger: { trigger: '.feat-grid', start: 'top 82%', toggleActions: 'play none none none' }
+  y: 40, opacity: 0, duration: .7, ease: 'power3.out', stagger: .1,
+  scrollTrigger: { trigger: '.feat-grid', start: 'top 85%', toggleActions: 'play none none none' }
 });
 
-/* ================================================
-   METRICS — stagger
-   ================================================ */
-gsap.from('.m-tile', {
-  y: 40, opacity: 0, duration: 0.7, ease: 'power3.out',
-  stagger: 0.1,
-  scrollTrigger: { trigger: '.m-grid', start: 'top 85%', toggleActions: 'play none none none' }
+/* STATS */
+gsap.from('.stat-card', {
+  y: 30, opacity: 0, duration: .6, ease: 'power3.out', stagger: .08,
+  scrollTrigger: { trigger: '.stats-grid', start: 'top 85%', toggleActions: 'play none none none' }
 });
 
-/* Counter animation */
+/* COUNTER */
 var counterObs = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
@@ -640,7 +555,7 @@ var counterObs = new IntersectionObserver(function(entries) {
       var start = performance.now();
       (function update(now) {
         var p = Math.min((now - start) / 1200, 1);
-        el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+        el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target).toLocaleString();
         if (p < 1) requestAnimationFrame(update);
       })(start);
       counterObs.unobserve(el);
@@ -649,22 +564,18 @@ var counterObs = new IntersectionObserver(function(entries) {
 }, { threshold: 0.5 });
 document.querySelectorAll('.counter').forEach(function(el) { counterObs.observe(el); });
 
-/* ================================================
-   CTA — reveal
-   ================================================ */
-gsap.from('.cta h2', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
-  scrollTrigger: { trigger: '.cta', start: 'top 82%', toggleActions: 'play none none none' }
+/* CTA */
+gsap.from('.cta h2', { y: 40, opacity: 0, duration: .8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.cta', start: 'top 85%', toggleActions: 'play none none none' }
 });
-gsap.from('.cta p', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.1,
-  scrollTrigger: { trigger: '.cta', start: 'top 82%', toggleActions: 'play none none none' }
+gsap.from('.cta p', { y: 30, opacity: 0, duration: .7, ease: 'power3.out', delay: .1,
+  scrollTrigger: { trigger: '.cta', start: 'top 85%', toggleActions: 'play none none none' }
 });
-gsap.from('.cta .btn-pill', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out', delay: 0.2,
-  scrollTrigger: { trigger: '.cta', start: 'top 82%', toggleActions: 'play none none none' }
+gsap.from('.cta-btns', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', delay: .2,
+  scrollTrigger: { trigger: '.cta', start: 'top 85%', toggleActions: 'play none none none' }
 });
 
-/* ================================================
-   MOBILE NAV
-   ================================================ */
+/* MOBILE NAV */
 var toggle = document.getElementById('nav-toggle');
 var mobileMenu = document.getElementById('mobile-menu');
 if (toggle && mobileMenu) {
