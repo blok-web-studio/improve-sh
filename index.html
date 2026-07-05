@@ -76,9 +76,6 @@ ul{list-style:none}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .hero-content{position:relative;z-index:2;width:100%;max-width:var(--max-w);margin:0 auto;padding:clamp(110px,18vh,180px) var(--px) clamp(120px,16vh,200px);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;min-height:100dvh}
 .hero-text{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:100%}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(28px,4vw,44px);opacity:0}
-.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .hero-headline{display:flex;flex-direction:column;align-items:flex-start;line-height:.95;letter-spacing:-.04em;position:relative}
 .hero-headline .line{display:block;color:#fff;white-space:nowrap;transform:translateZ(0);backface-visibility:hidden;text-shadow:0 4px 34px rgba(0,0,0,.85)}
 .hero-headline .line1{font-size:clamp(2.6rem,8.2vw,6.4rem);font-weight:500;filter:url(#ol-white)}
@@ -90,8 +87,8 @@ ul{list-style:none}
 .hero-meta{font-size:12px;color:var(--text3);margin-top:24px;opacity:0;letter-spacing:.02em}
 
 /* TERMINAL WIDGET — floating upper-right */
-.hero-visual{position:absolute;top:clamp(110px,18vh,170px);right:var(--px);z-index:3;opacity:0;transform:translateY(30px)}
-.hero-terminal{border:1px solid var(--border2);border-radius:10px;background:rgba(17,17,19,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:border-color .2s,transform .4s cubic-bezier(.22,1,.36,1);width:300px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.hero-visual{position:absolute;left:var(--px);bottom:clamp(28px,5vh,56px);z-index:3;opacity:0;transform:translateY(30px)}
+.hero-terminal{border:1px solid var(--border2);border-radius:10px;background:rgba(17,17,19,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:border-color .2s,transform .4s cubic-bezier(.22,1,.36,1);width:280px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .hero-terminal:hover{border-color:rgba(59,130,246,.25);transform:translateY(-4px)}
 .term-header{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
 .term-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
@@ -114,7 +111,7 @@ ul{list-style:none}
 .term-dim{color:var(--text3)}
 .term-hl{color:var(--accent);font-weight:500}
 @media(max-width:1024px){
-  .hero-terminal{width:260px}
+  .hero-terminal{width:250px}
   .term-body{font-size:13px;padding:14px}
 }
 @media(max-width:768px){
@@ -256,7 +253,6 @@ ul{list-style:none}
   <canvas id="hero-canvas"></canvas>
   <div class="hero-content">
     <div class="hero-text">
-      <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
       <h1 class="hero-headline" aria-label="The plan is the product">
         <span class="line line1">The plan is</span>
         <span class="line line2">the product</span>
@@ -292,11 +288,11 @@ ul{list-style:none}
           <span class="term-cursor"></span>
         </div>
         <div class="term-footer">
-          <span class="term-ok">✓</span> plan generated in <strong>0.8s</strong>
+          <span class="term-ok">✓</span><span style="white-space:nowrap">generated in <strong>0.8s</strong></span>
           <span class="term-dot-sep">&middot;</span>
-          <span class="term-dim">12 steps</span>
+          <span class="term-dim" style="white-space:nowrap">12 steps</span>
           <span class="term-dot-sep">&middot;</span>
-          <span class="term-hl">7.2k tokens</span>
+          <span class="term-hl" style="white-space:nowrap">7.2k tokens</span>
         </div>
       </div>
     </div>
@@ -483,8 +479,8 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 2.4, 5.2);
-    camera.lookAt(0, -0.4, 0);
+    camera.position.set(0, 2.0, 5.8);
+    camera.lookAt(0, -0.6, 0);
 
     var cols = 70, rows = 40;
     var count = cols * rows;
@@ -523,7 +519,7 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     }
     lineGeo.setIndex(lineIndices);
     var lineMat = new THREE.LineBasicMaterial({
-      color: 0x3b82f6, transparent: true, opacity: 0.28,
+      color: 0x3b82f6, transparent: true, opacity: 0.18,
       blending: THREE.AdditiveBlending
     });
     var waveLines = new THREE.LineSegments(lineGeo, lineMat);
@@ -533,8 +529,8 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     var pointGeo = new THREE.BufferGeometry();
     pointGeo.setAttribute('position', posAttr);
     var pointMat = new THREE.PointsMaterial({
-      size: 0.11, color: 0x3b82f6, transparent: true,
-      opacity: 0.85, blending: THREE.AdditiveBlending, sizeAttenuation: true
+      size: 0.075, color: 0x3b82f6, transparent: true,
+      opacity: 0.55, blending: THREE.AdditiveBlending, sizeAttenuation: true
     });
     var wavePoints = new THREE.Points(pointGeo, pointMat);
     scene.add(wavePoints);
@@ -572,24 +568,24 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
           var idx = ci * 3;
           var x = posArr[idx];
           var z = posArr[idx + 2];
-          var wave = Math.sin(x * 1.1 + t * 1.0) * 0.9
-            + Math.cos(z * 0.9 + t * 0.75) * 0.65
-            + Math.sin((x + z) * 0.7 + t * 1.3) * 0.45
-            + Math.sin(x * 2.5 + z * 1.5 + t * 2.0) * 0.18;
+          var wave = Math.sin(x * 1.1 + t * 0.55) * 0.55
+            + Math.cos(z * 0.9 + t * 0.4) * 0.38
+            + Math.sin((x + z) * 0.7 + t * 0.7) * 0.26
+            + Math.sin(x * 2.5 + z * 1.5 + t * 1.0) * 0.12;
           posArr[idx + 1] = wave;
         }
       }
       lineGeo.attributes.position.needsUpdate = true;
 
-      waveLines.rotation.y = mx * 0.12;
-      waveLines.rotation.x = -0.25 + my * 0.06;
+      waveLines.rotation.y = mx * 0.06;
+      waveLines.rotation.x = -0.18 + my * 0.04;
       wavePoints.rotation.y = waveLines.rotation.y;
       wavePoints.rotation.x = waveLines.rotation.x;
 
-      var fade = 1 - scrollProg * 1.3;
-      lineMat.opacity = Math.max(0, 0.28 * fade);
-      pointMat.opacity = Math.max(0, 0.85 * fade);
-      pointMat.size = 0.11 - scrollProg * 0.03;
+      var fade = 1 - scrollProg * 0.9;
+      lineMat.opacity = Math.max(0, 0.18 * fade);
+      pointMat.opacity = Math.max(0, 0.55 * fade);
+      pointMat.size = 0.075 - scrollProg * 0.02;
 
       renderer.render(scene, camera);
     });
@@ -597,8 +593,7 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
 })();
 
 /* HERO TEXT ANIMATIONS */
-gsap.fromTo('.hero-eyebrow', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .5, ease: 'power3.out', delay: .1 });
-gsap.fromTo('.hero-headline .line1', { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: .25 });
+gsap.fromTo('.hero-headline .line1', { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: .15 });
 gsap.fromTo('.hero-headline .line2', { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: .35 });
 gsap.fromTo('.hero-sub', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'power3.out', delay: .6 });
 gsap.fromTo('.hero-btns', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'power3.out', delay: .75 });
