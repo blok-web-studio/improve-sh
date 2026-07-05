@@ -78,9 +78,12 @@ ul{list-style:none}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(32px,4vw,48px);opacity:0}
 .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(3.5rem,12vw,10rem);font-weight:900;letter-spacing:-.04em;line-height:.92;margin-bottom:0;max-width:100%;color:transparent;-webkit-text-stroke:2px rgba(250,250,250,.6);text-stroke:2px rgba(250,250,250,.6);paint-order:stroke fill;text-shadow:none;position:relative}
-.hero h1 .hl{color:transparent;-webkit-text-stroke:2.5px var(--accent);text-stroke:2.5px var(--accent);paint-order:stroke fill}
-.hero h1 em{font-style:normal;display:block;font-size:clamp(4.5rem,16vw,13rem);letter-spacing:-.05em;margin-top:-.04em}
+.hero h1{font-size:clamp(3.5rem,12vw,10rem);font-weight:900;letter-spacing:-.04em;line-height:.92;margin-bottom:0;max-width:100%;position:relative}
+.hero h1 svg{width:100%;display:block;overflow:visible}
+.hero h1 svg text{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hero h1 .line1{stroke:rgba(250,250,250,.55);stroke-width:1.8px}
+.hero h1 .line2{stroke:var(--accent);stroke-width:2px}
+.hero h1 em{font-style:normal;display:block;margin-top:-.02em}
 .hero-sub{font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--text2);max-width:420px;margin-top:clamp(24px,3vw,40px);font-weight:400;line-height:1.65;opacity:0}
 .hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0;justify-content:center;margin-top:clamp(28px,3vw,40px)}
 .hero-stars{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-left:4px}
@@ -252,7 +255,12 @@ ul{list-style:none}
   <div class="hero-content">
     <div class="hero-text">
       <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
-      <h1>The plan is<br><em class="hl">the product</em></h1>
+      <h1>
+        <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+          <text class="line1" x="50%" y="42%" text-anchor="middle" font-family="Urbanist" font-weight="900" font-size="180" letter-spacing="-7">The plan is</text>
+          <text class="line2" x="50%" y="88%" text-anchor="middle" font-family="Urbanist" font-weight="900" font-size="280" letter-spacing="-10">the product</text>
+        </svg>
+      </h1>
       <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
       <div class="hero-btns">
         <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary">
