@@ -73,20 +73,22 @@ ul{list-style:none}
 /* HERO */
 .hero{position:relative;min-height:100dvh;display:flex;align-items:center;overflow:hidden}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.hero-content{position:relative;z-index:2;max-width:var(--max-w);margin:0 auto;padding:0 var(--px);width:100%}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:28px;opacity:0}
+.hero-content{position:relative;z-index:2;max-width:var(--max-w);margin:0 auto;padding:0 var(--px);width:100%;display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,5vw,80px);align-items:center}
+.hero-text{display:flex;flex-direction:column}
+.hero-visual{display:flex;flex-direction:column;gap:20px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:28px;opacity:0;align-self:flex-start}
 .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px;max-width:700px}
+.hero h1{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px;max-width:600px}
 .hero h1 .hl{color:var(--accent)}
-.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text2);max-width:480px;margin-bottom:36px;font-weight:400;line-height:1.65;opacity:0}
+.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text2);max-width:440px;margin-bottom:36px;font-weight:400;line-height:1.65;opacity:0}
 .hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0}
 .hero-stars{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-left:4px}
 .hero-stars svg{width:14px;height:14px;fill:#eab308}
 .hero-meta{font-size:12px;color:var(--text3);margin-top:28px;opacity:0;letter-spacing:.02em}
 
 /* TERMINAL WIDGET */
-.hero-terminal{margin-top:36px;border:1px solid var(--border2);border-radius:12px;background:var(--surface);overflow:hidden;max-width:520px;transition:border-color .2s}
+.hero-terminal{border:1px solid var(--border2);border-radius:12px;background:var(--surface);overflow:hidden;transition:border-color .2s}
 .hero-terminal:hover{border-color:rgba(59,130,246,.25)}
 .term-header{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
 .term-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
@@ -184,6 +186,8 @@ ul{list-style:none}
 
 /* RESPONSIVE */
 @media(max-width:1024px){
+  .hero-content{grid-template-columns:1fr;gap:40px}
+  .hero-visual{order:-1}
   .steps-grid,.feat-grid{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -227,43 +231,46 @@ ul{list-style:none}
 <section class="hero" id="hero">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-content">
-    <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
-    <h1>The plan is<br>the <span class="hl">product</span></h1>
-    <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
-    <div class="hero-btns">
-      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-        Get started
-      </a>
-      <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-ghost">View on GitHub</a>
-      <span class="hero-stars">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        6.8k
-      </span>
+    <div class="hero-text">
+      <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
+      <h1>The plan is<br>the <span class="hl">product</span></h1>
+      <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
+      <div class="hero-btns">
+        <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          Get started
+        </a>
+        <a href="https://github.com/shadcn/improve" target="_blank" class="btn btn-ghost">View on GitHub</a>
+        <span class="hero-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          6.8k
+        </span>
+      </div>
+      <p class="hero-meta">by <strong style="color:var(--text)">shadcn</strong> &middot; MIT License</p>
     </div>
-    <p class="hero-meta">by <strong style="color:var(--text)">shadcn</strong> &middot; MIT License</p>
-
-    <div class="hero-terminal">
-      <div class="term-header">
-        <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
-        <span class="term-title">install.sh</span>
-        <span class="term-spacer"></span>
-        <button class="term-copy" id="term-copy" aria-label="Copy install command">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span>Copy</span>
-        </button>
-      </div>
-      <div class="term-body">
-        <span class="term-prompt">$</span>
-        <span class="term-cmd" id="install-cmd">npx improve audit</span>
-        <span class="term-cursor"></span>
-      </div>
-      <div class="term-footer">
-        <span class="term-ok">✓</span> plan generated in <strong>0.8s</strong>
-        <span class="term-dot-sep">&middot;</span>
-        <span class="term-dim">12 steps</span>
-        <span class="term-dot-sep">&middot;</span>
-        <span class="term-hl">7.2k tokens</span>
+    <div class="hero-visual">
+      <div class="hero-terminal">
+        <div class="term-header">
+          <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+          <span class="term-title">install.sh</span>
+          <span class="term-spacer"></span>
+          <button class="term-copy" id="term-copy" aria-label="Copy install command">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+        <div class="term-body">
+          <span class="term-prompt">$</span>
+          <span class="term-cmd" id="install-cmd">npx improve audit</span>
+          <span class="term-cursor"></span>
+        </div>
+        <div class="term-footer">
+          <span class="term-ok">✓</span> plan generated in <strong>0.8s</strong>
+          <span class="term-dot-sep">&middot;</span>
+          <span class="term-dim">12 steps</span>
+          <span class="term-dot-sep">&middot;</span>
+          <span class="term-hl">7.2k tokens</span>
+        </div>
       </div>
     </div>
   </div>
