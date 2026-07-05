@@ -71,47 +71,28 @@ ul{list-style:none}
 .mobile-menu a{font-size:15px;font-weight:500;color:var(--text);padding:18px 0;border-bottom:1px solid var(--border)}
 
 /* HERO */
-.hero{position:relative;min-height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero{position:relative;min-height:100dvh;display:flex;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 110% 95% at 5% 32%,rgba(10,10,10,.94) 0%,rgba(10,10,10,.58) 38%,transparent 78%);pointer-events:none}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.hero-content{position:relative;z-index:2;max-width:100%;margin:0 auto;padding:0 var(--px);width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100dvh}
-.hero-text{display:flex;flex-direction:column;align-items:center;gap:0}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(32px,4vw,48px);opacity:0}
+.hero-content{position:relative;z-index:2;width:100%;max-width:var(--max-w);margin:0 auto;padding:clamp(110px,18vh,180px) var(--px) clamp(120px,16vh,200px);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;min-height:100dvh}
+.hero-text{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:100%}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(28px,4vw,44px);opacity:0}
 .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{position:relative;max-width:100%;margin-bottom:0}
-.hero h1 svg{width:100%;height:auto;display:block;overflow:visible}
-.hero h1 .line1{fill:none;stroke:rgba(250,250,250,.5);stroke-width:2px;stroke-linecap:round;stroke-linejoin:round}
-.hero h1 .line2{fill:none;stroke:var(--accent);stroke-width:2.5px;stroke-linecap:round;stroke-linejoin:round}
-.hero-sub{font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--text2);max-width:420px;margin-top:clamp(24px,3vw,40px);font-weight:400;line-height:1.65;opacity:0}
-.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0;justify-content:center;margin-top:clamp(28px,3vw,40px)}
+.hero-headline{display:flex;flex-direction:column;align-items:flex-start;line-height:.95;letter-spacing:-.04em;position:relative}
+.hero-headline .line{display:block;color:#fff;white-space:nowrap;transform:translateZ(0);backface-visibility:hidden;text-shadow:0 4px 34px rgba(0,0,0,.85)}
+.hero-headline .line1{font-size:clamp(2.6rem,8.2vw,6.4rem);font-weight:500;filter:url(#ol-white)}
+.hero-headline .line2{font-size:clamp(3.4rem,11.5vw,9.6rem);font-weight:900;filter:url(#ol-accent);margin-top:.02em}
+.hero-sub{font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--text2);max-width:460px;margin-top:clamp(28px,3.5vw,44px);font-weight:400;line-height:1.65;opacity:0;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0;justify-content:flex-start;margin-top:clamp(28px,3vw,40px)}
 .hero-stars{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-left:4px}
 .hero-stars svg{width:14px;height:14px;fill:#eab308}
 .hero-meta{font-size:12px;color:var(--text3);margin-top:24px;opacity:0;letter-spacing:.02em}
 
-/* TERMINAL WIDGET — floating bottom-right */
-.hero-visual{position:absolute;bottom:clamp(20px,3vw,48px);right:var(--px);z-index:3}
-.hero-terminal{border:1px solid var(--border2);border-radius:10px;background:rgba(17,17,19,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:border-color .2s,bottom .6s cubic-bezier(.22,1,.36,1),opacity .6s cubic-bezier(.22,1,.36,1);max-width:340px;width:auto;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0}
-.hero-terminal:hover{border-color:rgba(59,130,246,.25)}
-.term-header{display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(24,24,27,.6);border-bottom:1px solid var(--border)}
-.term-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
-.term-dot:nth-child(1){background:#ef4444}
-.term-dot:nth-child(2){background:#eab308}
-.term-dot:nth-child(3){background:#22c55e}
-.term-title{font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-left:6px}
-.term-spacer{flex:1}
-.term-copy{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:10px;font-family:var(--font-body);color:var(--text2);background:transparent;border:1px solid var(--border);transition:all .15s;cursor:pointer}
-.term-copy:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
-.term-copy.copied{background:rgba(34,197,94,.1);border-color:#22c55e;color:#22c55e}
-.term-body{padding:10px 14px;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:13px}
-.term-prompt{color:var(--accent);font-weight:500;-webkit-user-select:none;user-select:none}
-.term-cmd{color:var(--text);font-weight:400;white-space:nowrap}
-.term-cursor{display:inline-block;width:2px;height:14px;background:var(--accent);animation:blink 1s step-end infinite;margin-left:-3px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.term-footer{display:flex;align-items:center;gap:6px;padding:6px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)}
-.term-ok{color:#22c55e;font-weight:600}
-.term-dot-sep{color:var(--text3)}
-.term-dim{color:var(--text3)}
-.term-hl{color:var(--accent);font-weight:500}
+/* TERMINAL WIDGET — floating upper-right */
+.hero-visual{position:absolute;top:clamp(110px,18vh,170px);right:var(--px);z-index:3;opacity:0;transform:translateY(30px)}
+.hero-terminal{border:1px solid var(--border2);border-radius:10px;background:rgba(17,17,19,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:border-color .2s,transform .4s cubic-bezier(.22,1,.36,1);width:300px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.hero-terminal:hover{border-color:rgba(59,130,246,.25);transform:translateY(-4px)}
 .term-header{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
 .term-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
 .term-dot:nth-child(1){background:#ef4444}
@@ -122,20 +103,22 @@ ul{list-style:none}
 .term-copy{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-family:var(--font-body);color:var(--text2);background:transparent;border:1px solid var(--border);transition:all .15s;cursor:pointer}
 .term-copy:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .term-copy.copied{background:rgba(34,197,94,.1);border-color:#22c55e;color:#22c55e}
-.term-body{padding:20px 20px;display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:15px}
+.term-body{padding:18px 18px;display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:14px}
 .term-prompt{color:var(--accent);font-weight:500;-webkit-user-select:none;user-select:none}
-.term-cmd{color:var(--text);font-weight:400}
-.term-cursor{display:inline-block;width:2px;height:16px;background:var(--accent);animation:blink 1s step-end infinite;margin-left:-4px}
+.term-cmd{color:var(--text);font-weight:400;white-space:nowrap}
+.term-cursor{display:inline-block;width:2px;height:15px;background:var(--accent);animation:blink 1s step-end infinite;margin-left:-4px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.term-footer{display:flex;align-items:center;gap:6px;padding:8px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)}
+.term-footer{display:flex;align-items:center;gap:5px;padding:7px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)}
 .term-ok{color:#22c55e;font-weight:600}
 .term-dot-sep{color:var(--text3)}
 .term-dim{color:var(--text3)}
 .term-hl{color:var(--accent);font-weight:500}
-@media(max-width:600px){
-  .hero-terminal{max-width:100%}
-  .term-body{font-size:13px;padding:12px 14px}
-  .term-title{display:none}
+@media(max-width:1024px){
+  .hero-terminal{width:260px}
+  .term-body{font-size:13px;padding:14px}
+}
+@media(max-width:768px){
+  .hero-visual{display:none}
 }
 
 /* SECTION */
@@ -217,10 +200,31 @@ ul{list-style:none}
   .stats-grid{grid-template-columns:1fr}
   .footer-inner{flex-direction:column;align-items:flex-start}
   .footer-left{flex-direction:column;align-items:flex-start}
+  .hero-headline .line1{font-size:clamp(2.2rem,10vw,4.2rem)}
+  .hero-headline .line2{font-size:clamp(3rem,14vw,5.6rem)}
 }
 </style>
 </head>
 <body>
+
+<svg style="position:absolute;width:0;height:0;pointer-events:none" aria-hidden="true">
+  <defs>
+    <filter id="ol-white" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="2.5" result="dilate"/>
+      <feComposite in="dilate" in2="SourceAlpha" operator="out" result="outline"/>
+      <feFlood flood-color="#fafafa" flood-opacity="0.95" result="color"/>
+      <feComposite in="color" in2="outline" operator="in" result="outlineColor"/>
+      <feMerge><feMergeNode in="outlineColor"/></feMerge>
+    </filter>
+    <filter id="ol-accent" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="2.5" result="dilate"/>
+      <feComposite in="dilate" in2="SourceAlpha" operator="out" result="outline"/>
+      <feFlood flood-color="#3b82f6" flood-opacity="0.95" result="color"/>
+      <feComposite in="color" in2="outline" operator="in" result="outlineColor"/>
+      <feMerge><feMergeNode in="outlineColor"/></feMerge>
+    </filter>
+  </defs>
+</svg>
 
 <div id="progress"></div>
 <div class="nav-bg" id="nav-bg"></div>
@@ -253,11 +257,9 @@ ul{list-style:none}
   <div class="hero-content">
     <div class="hero-text">
       <div class="hero-eyebrow"><span class="dot"></span> AI codebase auditor</div>
-      <h1>
-        <svg viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg">
-          <text class="line1" x="50%" y="40%" text-anchor="middle" font-family="Urbanist, sans-serif" font-weight="900" font-size="260" letter-spacing="-8">The plan is</text>
-          <text class="line2" x="50%" y="88%" text-anchor="middle" font-family="Urbanist, sans-serif" font-weight="900" font-size="400" letter-spacing="-12">the product</text>
-        </svg>
+      <h1 class="hero-headline" aria-label="The plan is the product">
+        <span class="line line1">The plan is</span>
+        <span class="line line2">the product</span>
       </h1>
       <p class="hero-sub">improve audits your codebase with premium models, then writes execution plans that cheaper models can follow.</p>
       <div class="hero-btns">
@@ -472,7 +474,7 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
   document.getElementById('nav-bg').classList.toggle('show', s.progress > 0);
 }});
 
-/* THREE.JS - PARTICLE GRID TERRAIN */
+/* THREE.JS - PARTICLE WAVE FIELD */
 (function(){
   var canvas = document.getElementById('hero-canvas');
   if (!canvas || !window.THREE) return;
@@ -481,17 +483,16 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 1.2, 7);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 2.4, 5.2);
+    camera.lookAt(0, -0.4, 0);
 
-    var cols = 80, rows = 50;
+    var cols = 70, rows = 40;
     var count = cols * rows;
     var positions = new Float32Array(count * 3);
-    var colors = new Float32Array(count * 3);
     var baseY = new Float32Array(count);
 
     var aR = 59/255, aG = 130/255, aB = 246/255;
-    var spacing = 0.18;
+    var spacing = 0.16;
     var oX = -(cols * spacing) / 2;
     var oZ = -(rows * spacing) / 2;
 
@@ -504,28 +505,39 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
         positions[idx + 1] = 0;
         positions[idx + 2] = z;
         baseY[i * cols + j] = 0;
-
-        var dx = x / ((cols * spacing) / 2);
-        var dz = z / ((rows * spacing) / 2);
-        var dist = Math.sqrt(dx * dx + dz * dz);
-        var fade = Math.max(0, 1 - dist * 0.8);
-        colors[idx] = aR * fade;
-        colors[idx + 1] = aG * fade;
-        colors[idx + 2] = aB * fade;
       }
     }
 
-    var geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    var posAttr = new THREE.BufferAttribute(positions, 3);
 
-    var mat = new THREE.PointsMaterial({
-      size: 0.065, vertexColors: true, transparent: true,
-      opacity: 0.75, blending: THREE.AdditiveBlending, sizeAttenuation: true
+    // wireframe wave
+    var lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', posAttr);
+    var lineIndices = [];
+    for (i = 0; i < rows; i++) {
+      for (j = 0; j < cols; j++) {
+        var ci = i * cols + j;
+        if (j < cols - 1) lineIndices.push(ci, ci + 1);
+        if (i < rows - 1) lineIndices.push(ci, ci + cols);
+      }
+    }
+    lineGeo.setIndex(lineIndices);
+    var lineMat = new THREE.LineBasicMaterial({
+      color: 0x3b82f6, transparent: true, opacity: 0.28,
+      blending: THREE.AdditiveBlending
     });
+    var waveLines = new THREE.LineSegments(lineGeo, lineMat);
+    scene.add(waveLines);
 
-    var grid = new THREE.Points(geo, mat);
-    scene.add(grid);
+    // particle points
+    var pointGeo = new THREE.BufferGeometry();
+    pointGeo.setAttribute('position', posAttr);
+    var pointMat = new THREE.PointsMaterial({
+      size: 0.11, color: 0x3b82f6, transparent: true,
+      opacity: 0.85, blending: THREE.AdditiveBlending, sizeAttenuation: true
+    });
+    var wavePoints = new THREE.Points(pointGeo, pointMat);
+    scene.add(wavePoints);
 
     function resize() {
       var w = canvas.clientWidth, h = canvas.clientHeight;
@@ -548,11 +560,11 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
       onUpdate: function(s) { scrollProg = s.progress; }
     });
 
-    var posArr = geo.attributes.position.array;
+    var posArr = lineGeo.attributes.position.array;
     gsap.ticker.add(function() {
       var t = performance.now() * 0.001;
-      mx += (mtx - mx) * 0.04;
-      my += (mty - my) * 0.04;
+      mx += (mtx - mx) * 0.035;
+      my += (mty - my) * 0.035;
 
       for (var i = 0; i < rows; i++) {
         for (var j = 0; j < cols; j++) {
@@ -560,19 +572,24 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
           var idx = ci * 3;
           var x = posArr[idx];
           var z = posArr[idx + 2];
-          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 0.7
-            + Math.cos(z * 1.2 + t * 0.6) * 0.5
-            + Math.sin((x + z) * 0.8 + t) * 0.3;
+          var wave = Math.sin(x * 1.1 + t * 1.0) * 0.9
+            + Math.cos(z * 0.9 + t * 0.75) * 0.65
+            + Math.sin((x + z) * 0.7 + t * 1.3) * 0.45
+            + Math.sin(x * 2.5 + z * 1.5 + t * 2.0) * 0.18;
+          posArr[idx + 1] = wave;
         }
       }
-      geo.attributes.position.needsUpdate = true;
+      lineGeo.attributes.position.needsUpdate = true;
 
-      grid.rotation.y = mx * 0.15;
-      grid.rotation.x = -0.3 + my * 0.08;
+      waveLines.rotation.y = mx * 0.12;
+      waveLines.rotation.x = -0.25 + my * 0.06;
+      wavePoints.rotation.y = waveLines.rotation.y;
+      wavePoints.rotation.x = waveLines.rotation.x;
 
-      var fade = 1 - scrollProg * 1.5;
-      mat.opacity = Math.max(0, 0.75 * fade);
-      mat.size = 0.065 - scrollProg * 0.015;
+      var fade = 1 - scrollProg * 1.3;
+      lineMat.opacity = Math.max(0, 0.28 * fade);
+      pointMat.opacity = Math.max(0, 0.85 * fade);
+      pointMat.size = 0.11 - scrollProg * 0.03;
 
       renderer.render(scene, camera);
     });
@@ -580,12 +597,13 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
 })();
 
 /* HERO TEXT ANIMATIONS */
-gsap.from('.hero-eyebrow', { y: 16, opacity: 0, duration: .5, ease: 'power3.out', delay: .1 });
-gsap.from('.hero h1', { y: 80, opacity: 0, duration: 1, ease: 'power4.out', delay: .2 });
-gsap.from('.hero-sub', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', delay: .5 });
-gsap.from('.hero-btns', { y: 20, opacity: 0, duration: .6, ease: 'power3.out', delay: .65 });
-gsap.from('.hero-meta', { y: 12, opacity: 0, duration: .5, ease: 'power3.out', delay: .8 });
-gsap.from('.hero-visual .hero-terminal', { y: 40, opacity: 0, duration: .8, ease: 'power4.out', delay: 1.1 });
+gsap.fromTo('.hero-eyebrow', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .5, ease: 'power3.out', delay: .1 });
+gsap.fromTo('.hero-headline .line1', { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: .25 });
+gsap.fromTo('.hero-headline .line2', { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: .35 });
+gsap.fromTo('.hero-sub', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'power3.out', delay: .6 });
+gsap.fromTo('.hero-btns', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'power3.out', delay: .75 });
+gsap.fromTo('.hero-meta', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .5, ease: 'power3.out', delay: .9 });
+gsap.fromTo('.hero-visual', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: .8, ease: 'power4.out', delay: 1.1 });
 
 /* COPY BUTTON */
 (function(){
@@ -608,7 +626,7 @@ gsap.from('.hero-visual .hero-terminal', { y: 40, opacity: 0, duration: .8, ease
 })();
 
 gsap.to('.hero-text', {
-  y: -80, ease: 'none',
+  y: -60, ease: 'none',
   scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.5 }
 });
 
