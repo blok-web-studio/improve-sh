@@ -78,9 +78,9 @@ ul{list-style:none}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(32px,4vw,48px);opacity:0}
 .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(3.2rem,11vw,9rem);font-weight:900;letter-spacing:-.06em;line-height:.92;margin-bottom:0;max-width:100%;color:transparent;-webkit-text-stroke:1.5px rgba(250,250,250,.5);text-stroke:1.5px rgba(250,250,250,.5);text-shadow:none;position:relative}
-.hero h1 .hl{color:transparent;-webkit-text-stroke:1.5px var(--accent);text-stroke:1.5px var(--accent)}
-.hero h1 em{font-style:normal;display:block;font-size:clamp(4rem,15vw,12rem);letter-spacing:-.07em;margin-top:-.08em}
+.hero h1{font-size:clamp(3.2rem,11vw,9rem);font-weight:900;letter-spacing:-.05em;line-height:.95;margin-bottom:0;max-width:100%;color:transparent;-webkit-text-stroke:3px rgba(250,250,250,.7);text-stroke:3px rgba(250,250,250,.7);paint-order:stroke fill;text-shadow:none;position:relative}
+.hero h1 .hl{color:transparent;-webkit-text-stroke:3px var(--accent);text-stroke:3px var(--accent);paint-order:stroke fill}
+.hero h1 em{font-style:normal;display:block;font-size:clamp(4rem,15vw,12rem);letter-spacing:-.06em;margin-top:-.06em}
 .hero-sub{font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--text2);max-width:420px;margin-top:clamp(24px,3vw,40px);font-weight:400;line-height:1.65;opacity:0}
 .hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0;justify-content:center;margin-top:clamp(28px,3vw,40px)}
 .hero-stars{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-left:4px}
@@ -474,11 +474,11 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-    camera.position.set(0, 2.5, 6);
-    camera.lookAt(0, 0, 0);
+    var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 1.8, 7);
+    camera.lookAt(0, -0.5, 0);
 
-    var cols = 60, rows = 40;
+    var cols = 80, rows = 50;
     var count = cols * rows;
     var positions = new Float32Array(count * 3);
     var colors = new Float32Array(count * 3);
@@ -514,8 +514,8 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     var mat = new THREE.PointsMaterial({
-      size: 0.035, vertexColors: true, transparent: true,
-      opacity: 0.6, blending: THREE.AdditiveBlending, sizeAttenuation: true
+      size: 0.055, vertexColors: true, transparent: true,
+      opacity: 0.7, blending: THREE.AdditiveBlending, sizeAttenuation: true
     });
 
     var grid = new THREE.Points(geo, mat);
@@ -554,9 +554,9 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
           var idx = ci * 3;
           var x = posArr[idx];
           var z = posArr[idx + 2];
-          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 0.12
-            + Math.cos(z * 1.2 + t * 0.6) * 0.1
-            + Math.sin((x + z) * 0.8 + t) * 0.06;
+          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 0.35
+            + Math.cos(z * 1.2 + t * 0.6) * 0.3
+            + Math.sin((x + z) * 0.8 + t) * 0.15;
         }
       }
       geo.attributes.position.needsUpdate = true;
