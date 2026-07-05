@@ -78,11 +78,11 @@ ul{list-style:none}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,.15);padding:6px 14px;border-radius:999px;margin-bottom:clamp(32px,4vw,48px);opacity:0}
 .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(3.5rem,12vw,10rem);font-weight:900;letter-spacing:-.04em;line-height:.92;margin-bottom:0;max-width:100%;position:relative}
+.hero h1{font-size:clamp(3.5rem,12vw,10rem);font-weight:900;letter-spacing:-.04em;line-height:.92;margin-bottom:0;max-width:100%;position:relative;color:var(--text)}
 .hero h1 svg{width:100%;display:block;overflow:visible}
-.hero h1 svg text{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.hero h1 .line1{stroke:rgba(250,250,250,.55);stroke-width:1.8px}
-.hero h1 .line2{stroke:var(--accent);stroke-width:2px}
+.hero h1 svg text{stroke-linecap:round;stroke-linejoin:round}
+.hero h1 .line1{fill:var(--text);stroke:none}
+.hero h1 .line2{fill:var(--accent);stroke:none}
 .hero h1 em{font-style:normal;display:block;margin-top:-.02em}
 .hero-sub{font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--text2);max-width:420px;margin-top:clamp(24px,3vw,40px);font-weight:400;line-height:1.65;opacity:0}
 .hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:0;justify-content:center;margin-top:clamp(28px,3vw,40px)}
@@ -482,9 +482,9 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-    camera.position.set(0, 0.5, 8);
-    camera.lookAt(0, 0.5, 0);
+    var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 1.2, 7);
+    camera.lookAt(0, 0, 0);
 
     var cols = 80, rows = 50;
     var count = cols * rows;
@@ -522,8 +522,8 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     var mat = new THREE.PointsMaterial({
-      size: 0.08, vertexColors: true, transparent: true,
-      opacity: 0.8, blending: THREE.AdditiveBlending, sizeAttenuation: true
+      size: 0.065, vertexColors: true, transparent: true,
+      opacity: 0.75, blending: THREE.AdditiveBlending, sizeAttenuation: true
     });
 
     var grid = new THREE.Points(geo, mat);
@@ -562,9 +562,9 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
           var idx = ci * 3;
           var x = posArr[idx];
           var z = posArr[idx + 2];
-          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 1.2
-            + Math.cos(z * 1.2 + t * 0.6) * 0.8
-            + Math.sin((x + z) * 0.8 + t) * 0.5;
+          posArr[idx + 1] = Math.sin(x * 1.5 + t * 0.8) * 0.7
+            + Math.cos(z * 1.2 + t * 0.6) * 0.5
+            + Math.sin((x + z) * 0.8 + t) * 0.3;
         }
       }
       geo.attributes.position.needsUpdate = true;
@@ -573,8 +573,8 @@ ScrollTrigger.create({ start: 'top -60', onUpdate: function(s) {
       grid.rotation.x = -0.3 + my * 0.08;
 
       var fade = 1 - scrollProg * 1.5;
-      mat.opacity = Math.max(0, 0.8 * fade);
-      mat.size = 0.08 - scrollProg * 0.02;
+      mat.opacity = Math.max(0, 0.75 * fade);
+      mat.size = 0.065 - scrollProg * 0.015;
 
       renderer.render(scene, camera);
     });
